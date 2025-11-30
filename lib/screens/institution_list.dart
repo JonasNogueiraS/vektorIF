@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/core/widgets/custom_header.dart';
-
+import 'package:vektor_if/core/widgets/institution_cards.dart';
 class SelectInstitutionScreen extends StatelessWidget {
   const SelectInstitutionScreen({super.key});
+
+  final List<Map<String, String>> institutions = const [
+    {"name": "Instituto Federal Do Maranhão", "address": "Av. Amazonas, Centro"},
+    {"name": "Shopping Caxias", "address": "Rodovia BR-316"},
+    {"name": "Embrapa", "address": "Zona Rural"},
+    {"name": "LabTeste", "address": "Rua das Flores, 123"},
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -28,20 +35,20 @@ class SelectInstitutionScreen extends StatelessWidget {
                   const SizedBox(height: 5),
 
                   Expanded(
-                    child: ListView(
+                    child: ListView.builder(
                       padding: EdgeInsets.zero,
-                      children: const [
-                        InstitutionCard(
-                          name: "Instituto Federal Do Maranhão",
-                          address: "Endereço",
-                        ),
-                        InstitutionCard(
-                          name: "Shopping Caxias",
-                          address: "Endereço",
-                        ),
-                        InstitutionCard(name: "Embrapa", address: "Endereço"),
-                        InstitutionCard(name: "LabTeste", address: "Endereço"),
-                      ],
+                      itemCount: institutions.length,
+                      itemBuilder: (context, index) {
+                        final item = institutions[index];
+
+                        return InstitutionCards(
+                          name: item["name"]!,
+                          address: item["address"]!,
+                          onTap: () {
+                            print("Selecionou: ${item['name']}");
+                          },
+                        );
+                      },
                     ),
                   ),
 
@@ -75,52 +82,6 @@ class SelectInstitutionScreen extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class InstitutionCard extends StatelessWidget {
-  final String name;
-  final String address;
-
-  const InstitutionCard({super.key, required this.name, required this.address});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0x1B000000),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(16),
-        leading: Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            color: const Color(0xFFE8F0FE), // Azul bem clarinho
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-        title: Text(
-          name,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-        ),
-        subtitle: Text(address),
-        trailing: const Icon(Icons.arrow_forward, color: Colors.black54),
-        onTap: () {
-          // Futuro: Navegar para o mapa dessa instituição
-          print("Clicou em $name");
-        },
       ),
     );
   }
