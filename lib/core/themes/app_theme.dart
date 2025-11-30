@@ -37,10 +37,10 @@ class AppTheme {
         ),
 
         headlineLarge: GoogleFonts.lexend(
-          fontWeight: FontWeight.w600, color: colorBlackText
+          fontWeight: FontWeight.w800, color: colorBlackText
         ),
         headlineMedium: GoogleFonts.lexend(
-          fontWeight: FontWeight.w600, color: colorBlackText
+          fontWeight: FontWeight.w700, color: colorBlackText
         ),
         headlineSmall: GoogleFonts.lexend(
           fontWeight: FontWeight.w600, color: colorBlackText
