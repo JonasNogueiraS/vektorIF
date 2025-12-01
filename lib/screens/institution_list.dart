@@ -2,15 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/core/widgets/custom_header.dart';
 import 'package:vektor_if/core/widgets/institution_cards.dart';
+import 'package:vektor_if/models/insitution_repository.dart';
+
 class SelectInstitutionScreen extends StatelessWidget {
   const SelectInstitutionScreen({super.key});
-
-  final List<Map<String, String>> institutions = const [
-    {"name": "Instituto Federal Do Maranhão", "address": "Av. Amazonas, Centro"},
-    {"name": "Shopping Caxias", "address": "Rodovia BR-316"},
-    {"name": "Embrapa", "address": "Zona Rural"},
-    {"name": "LabTeste", "address": "Rua das Flores, 123"},
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -37,15 +32,15 @@ class SelectInstitutionScreen extends StatelessWidget {
                   Expanded(
                     child: ListView.builder(
                       padding: EdgeInsets.zero,
-                      itemCount: institutions.length,
+                      itemCount: mockInstitutions.length,
                       itemBuilder: (context, index) {
-                        final item = institutions[index];
+                        final item = mockInstitutions[index];
 
                         return InstitutionCards(
-                          name: item["name"]!,
-                          address: item["address"]!,
+                          name: item.name,
+                          address: item.address,
                           onTap: () {
-                            print("Selecionou: ${item['name']}");
+                            print("Selecionou: ${item.name}");
                           },
                         );
                       },
