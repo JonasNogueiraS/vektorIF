@@ -24,7 +24,6 @@ class ManagementScreen extends StatelessWidget {
                 children: [
                   const SizedBox(height: 10),
 
-                  // --- Cabeçalho ---
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -61,7 +60,6 @@ class ManagementScreen extends StatelessWidget {
 
                   const SizedBox(height: 30),
 
-                  // --- Formulário Final ---
                   Text(
                     "Informações da Instituição",
                     style: TextStyle(
