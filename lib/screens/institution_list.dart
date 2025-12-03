@@ -40,7 +40,7 @@ class SelectInstitutionScreen extends StatelessWidget {
                           name: item.name,
                           address: item.address,
                           onTap: () {
-                            print("Selecionou: ${item.name}");
+                            Navigator.pushNamed(context, '/home-map');
                           },
                         );
                       },

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/screens/enter_app.dart';
+import 'package:vektor_if/screens/home_map.dart';
 import 'package:vektor_if/screens/institution_list.dart';
 
 void main() {
@@ -21,6 +22,7 @@ class VektorApp extends StatelessWidget {
       routes: {
         '/':(context) => const EnterApp(),
         '/select-instituition': (context) => const SelectInstitutionScreen(),
+        '/home-map':(context) => const HomeMap(),
       },
     );
   }
