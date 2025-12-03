@@ -39,7 +39,7 @@ class HomeHeader extends StatelessWidget {
                     ),
                     IconButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/menagement');
+                        Navigator.pushNamed(context, '/management');
                       },
                       icon: const Icon(Icons.settings_outlined),
                       color: AppTheme.colorBlackText,

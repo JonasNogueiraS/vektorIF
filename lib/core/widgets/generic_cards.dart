@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class InstitutionCard extends StatelessWidget {
   final String name;
   final String address;
-  final String? imagePath; // Opcional
+  final String? imagePath; 
 
   const InstitutionCard({
     super.key,

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/widgets/custom_back_button.dart';
-import 'package:vektor_if/screens/menagement/widget/cards_option_menagement.dart';
-import 'package:vektor_if/screens/menagement/widget/institution_cards.dart';
+import 'package:vektor_if/core/widgets/generic_cards.dart';
+import 'package:vektor_if/screens/menagement/widget/list_managements.dart';
 import '../../../../../core/themes/app_theme.dart';
 import '../../../../../core/widgets/background_image.dart';
 
-class MenagementScreen extends StatelessWidget {
-  const MenagementScreen({super.key});
+class ManagementScreen extends StatelessWidget {
+  const ManagementScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class MenagementScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 10),
-                  
+
                   // --- Cabeçalho ---
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -31,7 +31,9 @@ class MenagementScreen extends StatelessWidget {
                       CustomBackButtom(),
                       Text(
                         "Gerenciamento",
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(),
+                        style: Theme.of(
+                          context,
+                        ).textTheme.headlineSmall?.copyWith(),
                       ),
                       IconButton(
                         onPressed: () {},
@@ -39,44 +41,21 @@ class MenagementScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-
-                  const SizedBox(height: 30),
-
-                  // --- Widget: Card da Instituição ---
                   const InstitutionCard(
-                    name: "Instituto Federal do Maranhão - IFMA",
-                    address: "Caxias - Ma",
-                    // imagePath: "assets/images/logo.png", 
-                  ),
+                    name: "Instituto Federal do Maranhão", 
+                    address: "Caxias-MA"
+                    ),
                   const SizedBox(height: 30),
 
-                  // --- Widget: Opções de Gestão ---
-                  ManagementOptionCard(
-                    title: "Gestão De Setores",
-                    subtitle: "Consulte, adicione e remova setores",
-                    icon: Icons.domain,
-                    onTap: () {
-                       // Ação aqui
+                  ManagementOptionsList(
+                    onSectorsTap: () {
+                      // Navigator.pushNamed(context, '/sectors');
                     },
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  ManagementOptionCard(
-                    title: "Gestão De Pessoa",
-                    subtitle: "Consulte, cadastre ou remova colaboradores",
-                    icon: Icons.people_alt_outlined,
-                    onTap: () {
-                      // Ação aqui
+                    onPeopleTap: () {
+                      // Navigator.pushNamed(context, '/people');
                     },
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  ManagementOptionCard(
-                    title: "Gestão De Mapa",
-                    subtitle: "Upload e ajuste de planta baixa",
-                    icon: Icons.map_outlined,
-                    onTap: () {
-                      // Ação aqui
+                    onMapTap: () {
+                      // Navigator.pushNamed(context, '/map');
                     },
                   ),
 
@@ -92,12 +71,12 @@ class MenagementScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   _buildTextFieldLabel("Nome"),
                   _buildTextFieldInput(initialValue: "Instituto Federal..."),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   _buildTextFieldLabel("Endereço"),
                   _buildTextFieldInput(initialValue: "Av. Alguma Coisa"),
 
@@ -111,7 +90,7 @@ class MenagementScreen extends StatelessWidget {
     );
   }
 
-  // Mantive apenas os widgets de Input como métodos locais, 
+  // Mantive apenas os widgets de Input como métodos locais,
   // pois eles são bem simples, mas você também pode extraí-los se desejar.
   Widget _buildTextFieldLabel(String label) {
     return Padding(

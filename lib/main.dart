@@ -24,7 +24,7 @@ class VektorApp extends StatelessWidget {
         '/':(context) => const EnterApp(),
         '/select-instituition': (context) => const SelectInstitutionScreen(),
         '/home-map':(context) => const HomeMap(),
-        '/menagement': (context) => const MenagementScreen(),
+        '/management': (context) => const ManagementScreen(),
       },
     );
   }
