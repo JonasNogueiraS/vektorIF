@@ -90,8 +90,6 @@ class ManagementScreen extends StatelessWidget {
     );
   }
 
-  // Mantive apenas os widgets de Input como métodos locais,
-  // pois eles são bem simples, mas você também pode extraí-los se desejar.
   Widget _buildTextFieldLabel(String label) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0, left: 4),
