@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
-import 'package:vektor_if/core/widgets/custom_header.dart';
+import 'package:vektor_if/core/widgets/header_log.dart';
 
 class EnterApp extends StatelessWidget {
   const EnterApp({super.key});
