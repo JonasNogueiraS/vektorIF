@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
+import 'package:vektor_if/core/widgets/custom_back_button.dart';
 
 class CustomHeader extends StatelessWidget {
   final bool showBackButton;
@@ -25,18 +26,8 @@ class CustomHeader extends StatelessWidget {
           Positioned(
             top: 50,
             left: 24,
-            child: CircleAvatar(
-              backgroundColor: Color(0x4FFFFFFF),
-              child: IconButton(
-                icon: const Icon(
-                  Icons.arrow_back,
-                  color: AppTheme.colorBlackText,
-                ),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ),
+            child: CustomBackButtom(),
           ),
-
         Positioned(
           top: size.height * 0.15,
           child: Row(
