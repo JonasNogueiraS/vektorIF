@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/widgets/custom_back_button.dart';
-import 'package:vektor_if/core/widgets/generic_cards.dart';
+import 'package:vektor_if/screens/menagement/widget/institution_cards.dart';
 import 'package:vektor_if/screens/menagement/widget/list_managements.dart';
 import '../../../../../core/themes/app_theme.dart';
 import '../../../../../core/widgets/background_image.dart';
