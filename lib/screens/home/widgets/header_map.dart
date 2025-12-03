@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import '../../../../core/themes/app_theme.dart';
+import 'package:vektor_if/core/widgets/background_image.dart';
+import '../../../../../core/themes/app_theme.dart';
 
 class HomeHeader extends StatelessWidget {
   final double height;
-  final double curveWidth;
-  final double topPadding; 
+  final double topPadding;
 
   const HomeHeader({
     super.key,
     required this.height,
-    required this.curveWidth,
     required this.topPadding,
   });
 
@@ -20,17 +19,9 @@ class HomeHeader extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          Positioned(
-            top: topPadding, 
-            right: 0,
-            width: curveWidth*0.9,
-            height: height*1.5, 
-            child: Image.asset(
-              "assets/images/bg_curve_direita.png",
-              fit: BoxFit.fill,
-            ),
+          BackgroundImage(
+            height: height,
           ),
-
           // Textos
           Padding(
             padding: EdgeInsets.fromLTRB(24, topPadding + 20, 24, 0),
@@ -47,24 +38,25 @@ class HomeHeader extends StatelessWidget {
                       color: AppTheme.colorBlackText,
                     ),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/menagement');
+                      },
                       icon: const Icon(Icons.settings_outlined),
                       color: AppTheme.colorBlackText,
                     ),
                   ],
                 ),
-                
+
                 // Título
                 SizedBox(
-
-                  width: MediaQuery.of(context).size.width * 0.65, 
+                  width: MediaQuery.of(context).size.width * 0.65,
                   child: Text(
                     "Instituto Federal do Maranhão - IFMA",
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.colorBlackText,
-                        ),
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.colorBlackText,
+                    ),
                   ),
                 ),
               ],
@@ -95,7 +87,10 @@ class HomeHeader extends StatelessWidget {
                   hintText: "Procure por pessoa, setor...",
                   hintStyle: const TextStyle(color: Color(0xff49454F)),
                   prefixIcon: const SizedBox(width: 10),
-                  suffixIcon: const Icon(Icons.search, color: AppTheme.colorGrayText),
+                  suffixIcon: const Icon(
+                    Icons.search,
+                    color: AppTheme.colorGrayText,
+                  ),
                   border: InputBorder.none,
                   focusedBorder: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 10),

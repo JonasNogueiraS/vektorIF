@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
-import 'package:vektor_if/core/widgets/filter_list.dart';
-import 'package:vektor_if/core/widgets/header_background.dart';
-import 'package:vektor_if/core/widgets/interactive_map.dart';
+import 'package:vektor_if/screens/primary/widgets/filter_list.dart';
+import 'package:vektor_if/screens/home/widgets/header_map.dart';
+import 'package:vektor_if/screens/home/widgets/interactive_map.dart';
 
 class HomeMap extends StatefulWidget {
   const HomeMap({super.key});
@@ -21,7 +21,7 @@ class _HomeMapState extends State<HomeMap> {
     final paddingTop = MediaQuery.of(context).padding.top;
     
     final double headerHeight = size.height * 0.32;
-    final double curveWidth = size.width * 0.5;
+
 
     return Scaffold(
       backgroundColor: AppTheme.colorBackground,
@@ -31,7 +31,6 @@ class _HomeMapState extends State<HomeMap> {
           children: [
             HomeHeader(
               height: headerHeight,
-              curveWidth: curveWidth,
               topPadding: paddingTop,
             ),
 

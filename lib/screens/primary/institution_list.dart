@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
-import 'package:vektor_if/core/widgets/header_log.dart';
-import 'package:vektor_if/core/widgets/institution_cards.dart';
+import 'package:vektor_if/screens/primary/widgets/header_log.dart';
+import 'package:vektor_if/screens/primary/widgets/institution_cards.dart';
 import 'package:vektor_if/models/insitution_repository.dart';
 
 class SelectInstitutionScreen extends StatelessWidget {
