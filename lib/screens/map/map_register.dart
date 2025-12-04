@@ -17,7 +17,6 @@ class MapRegister extends StatelessWidget {
           const BackgroundImage(),
           SafeArea(
             child: SingleChildScrollView(
-              // evitar overflow em telas pequenas
               child: Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: context.percentWidth(0.05),
@@ -110,6 +109,7 @@ class MapRegister extends StatelessWidget {
                           "Edite ou substitua um mapa já existente no sistema.",
                       icon: Icons.edit_location_alt_outlined,
                       onTap: () {
+                         Navigator.pushNamed(context, '/map-editor');
                       },
                     ),
                   ],

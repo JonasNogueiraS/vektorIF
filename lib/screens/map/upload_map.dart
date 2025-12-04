@@ -35,7 +35,8 @@ class UploadMapScreen extends StatelessWidget {
                         const CustomBackButtom(),
                         Text(
                           "Gestão de Mapas",
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 color: const Color(0xff49454F),
@@ -43,7 +44,10 @@ class UploadMapScreen extends StatelessWidget {
                         ),
                         IconButton(
                           onPressed: () {},
-                          icon: const Icon(Icons.menu, color: Color(0xff49454F)),
+                          icon: const Icon(
+                            Icons.menu,
+                            color: Color(0xff49454F),
+                          ),
                         ),
                       ],
                     ),
@@ -83,10 +87,9 @@ class UploadMapScreen extends StatelessWidget {
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 14, color: Colors.grey),
                           ),
-                          
+
                           const SizedBox(height: 30),
 
-                          // UTILIZAÇÃO DO COMPONENTE SEPARADO
                           UploadSection(
                             onTap: () {
                               print("Lógica para abrir galeria");
@@ -99,7 +102,7 @@ class UploadMapScreen extends StatelessWidget {
                           ButtomGeneric(
                             label: "Salvar",
                             onPressed: () {
-                              // Lógica de salvar
+                              Navigator.pushNamed(context, '/map-editor');
                             },
                           ),
                         ],

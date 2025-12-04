@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
+import 'package:vektor_if/core/themes/size_extensions.dart';
 import 'package:vektor_if/screens/primary/widgets/filter_list.dart';
 import 'package:vektor_if/screens/home/widgets/header_map.dart';
 import 'package:vektor_if/screens/home/widgets/interactive_map.dart';
@@ -17,7 +18,6 @@ class _HomeMapState extends State<HomeMap> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       backgroundColor: AppTheme.colorBackground,
@@ -26,8 +26,6 @@ class _HomeMapState extends State<HomeMap> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             HomeHeader(),
-
-            // Outros widgets (Filtros e Mapa)
             FilterList(
               filters: filters,
               selectedFilter: selectedFilter,
@@ -35,7 +33,7 @@ class _HomeMapState extends State<HomeMap> {
             ),
 
             InteractiveMap(
-              height: size.height * 0.45 < 300 ? 300 : size.height * 0.45,
+              height: context.percentHeight(0.45) * 0.45 < 300 ? 300 : context.percentHeight(0.45),
             ),
             
             const SizedBox(height: 24),
