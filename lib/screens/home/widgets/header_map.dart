@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/size_extensions.dart';
 import 'package:vektor_if/core/widgets/background_image.dart';
+import 'package:vektor_if/screens/home/widgets/settings_menu_buttons.dart';
 import '../../../../../core/themes/app_theme.dart';
 
 class HomeHeader extends StatelessWidget {
@@ -31,13 +32,7 @@ class HomeHeader extends StatelessWidget {
                       icon: const Icon(Icons.notifications_none),
                       color: AppTheme.colorBlackText,
                     ),
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/management');
-                      },
-                      icon: const Icon(Icons.settings_outlined),
-                      color: AppTheme.colorBlackText,
-                    ),
+                    const SettingsMenuButton(),
                   ],
                 ),
 

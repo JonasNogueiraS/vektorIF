@@ -12,7 +12,7 @@ class SelectInstitutionScreen extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          CustomHeader(showBackButton: true),
+          CustomHeader(showBackButton: false),
 
           Expanded(
             child: Padding(
@@ -57,17 +57,17 @@ class SelectInstitutionScreen extends StatelessWidget {
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
-                          children: [
-                            const TextSpan(text: "Cadastre sua instituição "),
-                            TextSpan(
-                              text: "aqui",
-                              style: TextStyle(
-                                color: AppTheme.colorLogo,
-                                fontWeight: FontWeight.w600,
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
-                          ],
+                          // children: [
+                          //   const TextSpan(text: "Cadastre sua instituição "),
+                          //   TextSpan(
+                          //     text: "aqui",
+                          //     style: TextStyle(
+                          //       color: AppTheme.colorLogo,
+                          //       fontWeight: FontWeight.w600,
+                          //       decoration: TextDecoration.underline,
+                          //     ),
+                          //   ),
+                          // ],
                         ),
                       ),
                     ),
