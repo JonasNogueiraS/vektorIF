@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vektor_if/core/themes/app_theme.dart'; // Ajuste conforme seu projeto
+import 'package:vektor_if/core/themes/app_theme.dart'; 
 
 class MapOptionCard extends StatelessWidget {
   final String title;
@@ -31,13 +31,13 @@ class MapOptionCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppTheme.colorLogo.withOpacity(0.1), // Fundo suave do ícone
+                  color: AppTheme.colorLogo.withValues(alpha: 0.1), //fundo icon
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   icon,
                   size: 32,
-                  color: AppTheme.colorLogo, // Cor principal
+                  color: AppTheme.colorLogo, 
                 ),
               ),
               const SizedBox(width: 20),
