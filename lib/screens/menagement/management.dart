@@ -54,7 +54,7 @@ class ManagementScreen extends StatelessWidget {
                        Navigator.pushNamed(context, '/collaborators-register');
                     },
                     onMapTap: () {
-                      // Navigator.pushNamed(context, '/map');
+                      Navigator.pushNamed(context, '/map-register');
                     },
                   ),
 
