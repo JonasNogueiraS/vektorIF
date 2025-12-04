@@ -11,19 +11,17 @@ class ManagementScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.colorBackground,
       body: Stack(
         children: [
-          const BackgroundImage(height: 240),
-
+          BackgroundImage(),
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 10),
-
+                children: [   
+                  const SizedBox(height: 15),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -40,6 +38,8 @@ class ManagementScreen extends StatelessWidget {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 10),
+                  
                   const InstitutionCard(
                     name: "Instituto Federal do Maranhão", 
                     address: "Caxias-MA"
@@ -48,7 +48,7 @@ class ManagementScreen extends StatelessWidget {
 
                   ManagementOptionsList(
                     onSectorsTap: () {
-                      // Navigator.pushNamed(context, '/sectors');
+                       Navigator.pushNamed(context, '/sectors-register');
                     },
                     onPeopleTap: () {
                       // Navigator.pushNamed(context, '/people');

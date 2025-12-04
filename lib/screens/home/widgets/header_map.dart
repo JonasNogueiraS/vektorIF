@@ -1,30 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:vektor_if/core/themes/size_extensions.dart';
 import 'package:vektor_if/core/widgets/background_image.dart';
 import '../../../../../core/themes/app_theme.dart';
 
 class HomeHeader extends StatelessWidget {
-  final double height;
-  final double topPadding;
 
-  const HomeHeader({
-    super.key,
-    required this.height,
-    required this.topPadding,
-  });
+
+  const HomeHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: height,
+      height: context.percentHeight(0.30),
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          BackgroundImage(
-            height: height,
-          ),
+          BackgroundImage(),
           // Textos
           Padding(
-            padding: EdgeInsets.fromLTRB(24, topPadding + 20, 24, 0),
+            padding: EdgeInsets.fromLTRB(24, context.percentHeight(0.05), 24, 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -49,7 +43,7 @@ class HomeHeader extends StatelessWidget {
 
                 // Título
                 SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.65,
+                  width: context.percentWidth(0.65),
                   child: Text(
                     "Instituto Federal do Maranhão - IFMA",
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(

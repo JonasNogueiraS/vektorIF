@@ -18,10 +18,6 @@ class _HomeMapState extends State<HomeMap> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final paddingTop = MediaQuery.of(context).padding.top;
-    
-    final double headerHeight = size.height * 0.32;
-
 
     return Scaffold(
       backgroundColor: AppTheme.colorBackground,
@@ -29,10 +25,7 @@ class _HomeMapState extends State<HomeMap> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            HomeHeader(
-              height: headerHeight,
-              topPadding: paddingTop,
-            ),
+            HomeHeader(),
 
             // Outros widgets (Filtros e Mapa)
             FilterList(

@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:vektor_if/core/themes/size_extensions.dart';
 
 class BackgroundImage extends StatelessWidget {
-  final double height;
 
-  const BackgroundImage({super.key, required this.height});
+  const BackgroundImage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
+
 
     return SizedBox(
-      height: height,
+      height: context.height,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           Positioned(
             top: 0,
             right: 0,
-            width: screenWidth * 0.4,
-            height: height * 1.5,
+            width: context.width*0.45,
+            height: context.height*0.5,
             child: Image.asset(
               "assets/images/bg_curve_direita.png",
               fit: BoxFit.fill,
