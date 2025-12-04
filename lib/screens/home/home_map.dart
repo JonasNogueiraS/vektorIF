@@ -25,12 +25,26 @@ class _HomeMapState extends State<HomeMap> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            HomeHeader(),
+            const HomeHeader(), // Adicionei const para otimização
             FilterList(
               filters: filters,
               selectedFilter: selectedFilter,
               onFilterSelected: (val) => setState(() => selectedFilter = val),
             ),
+            
+            // --- AQUI ESTÁ A MUDANÇA ---
+            Padding(
+              padding: const EdgeInsets.only(left: 24, right: 24, top: 20, bottom: 10),
+              child: Text(
+                "Mapa Interativo",
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.colorBlackText, 
+                  fontSize: 20,
+                ),
+              ),
+            ),
+
 
             InteractiveMap(
               height: context.percentHeight(0.45) * 0.45 < 300 ? 300 : context.percentHeight(0.45),

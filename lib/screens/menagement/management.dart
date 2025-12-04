@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vektor_if/core/widgets/buttom_generic.dart';
 import 'package:vektor_if/core/widgets/custom_back_button.dart';
 import 'package:vektor_if/screens/menagement/widget/institution_cards.dart';
 import 'package:vektor_if/screens/menagement/widget/list_managements.dart';
@@ -77,6 +78,13 @@ class ManagementScreen extends StatelessWidget {
 
                   _buildTextFieldLabel("Endereço"),
                   _buildTextFieldInput(initialValue: "Av. Alguma Coisa"),
+                  const SizedBox(height: 10),
+
+                  ButtomGeneric(
+                    label: "Salvar Alterações",
+                    onPressed: () {
+                    },
+                  ),
 
                   const SizedBox(height: 40),
                 ],

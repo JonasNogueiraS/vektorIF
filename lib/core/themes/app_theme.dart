@@ -26,32 +26,69 @@ class AppTheme {
 
       textTheme: GoogleFonts.robotoTextTheme().copyWith(
         displayLarge: GoogleFonts.lexend(
-          fontWeight: FontWeight.bold, color: colorBlackText
+          fontWeight: FontWeight.w800, // ExtraBold
+          color: colorBlackText,
         ),
-
         displayMedium: GoogleFonts.lexend(
-          fontWeight: FontWeight.bold, color: colorBlackText
+          fontWeight: FontWeight.w700, // Bold
+          color: colorBlackText,
         ),
-
         displaySmall: GoogleFonts.lexend(
-          fontWeight: FontWeight.bold, color: colorBlackText
+          fontWeight: FontWeight.w600, // SemiBold
+          color: colorBlackText,
         ),
 
+        // Títulos de páginas e seções
         headlineLarge: GoogleFonts.lexend(
-          fontWeight: FontWeight.w800, color: colorBlackText
+          fontWeight: FontWeight.w700, // Bold
+          color: colorBlackText,
         ),
         headlineMedium: GoogleFonts.lexend(
-          fontWeight: FontWeight.w600, color: colorBlackText
+          fontWeight: FontWeight.w600, // SemiBold
+          color: colorBlackText,
         ),
         headlineSmall: GoogleFonts.lexend(
-          fontWeight: FontWeight.w500, color: colorBlackText
+          fontWeight: FontWeight.w500, // Medium
+          color: colorBlackText,
         ),
 
+        //Títulos de Cards e ListTiles 
+        titleLarge: GoogleFonts.lexend(
+          fontWeight: FontWeight.w600, // SemiBold
+          color: colorBlackText,
+        ),
+        titleMedium: GoogleFonts.lexend(
+          fontWeight: FontWeight.w500, // Medium
+          color: colorBlackText,
+        ),
+
+        // Texto corrido/parágrafos 
+        bodyLarge: GoogleFonts.roboto(
+          fontWeight: FontWeight.w400, // Regular
+          fontSize: 16,
+          color: colorBlackText,
+        ),
+        bodyMedium: GoogleFonts.roboto(
+          fontWeight: FontWeight.w400, // Regular
+          fontSize: 14,
+          color: colorBlackText,
+        ),
+
+        // Botões, Chips e Legendas
         labelLarge: GoogleFonts.roboto(
-          fontWeight: FontWeight.w900, fontSize: 18,
+          fontWeight: FontWeight.w700, // Bold (Ideal para botões)
+          fontSize: 16, 
+          letterSpacing: 0.5,
         ),
         labelMedium: GoogleFonts.roboto(
-         fontSize: 16, fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w500, // Medium
+          fontSize: 14,
+          letterSpacing: 0.5,
+        ),
+        labelSmall: GoogleFonts.roboto(
+          fontWeight: FontWeight.w500, // Medium
+          fontSize: 12,
+          letterSpacing: 0.5,
         ),
       ),
     );
