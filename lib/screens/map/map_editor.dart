@@ -72,7 +72,7 @@ class _MapEditorState extends State<MapEditor> {
     );
   }
 
-  // --- Métodos de Lógica ---
+  //Lógica 
 
   void _handleMapTap(TapUpDetails details) {
     if (_selectedToolIndex == 1) return; 

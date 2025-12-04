@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class SectorModal extends StatelessWidget {
   final Function(String) onSectorSelected;
 
-  // Lista estática movida para cá ou passada via construtor se preferir
   final List<String> _sectors = const [
     "Secretaria",
     "Coordenação TI",

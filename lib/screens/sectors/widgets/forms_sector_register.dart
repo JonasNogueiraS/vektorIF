@@ -63,7 +63,6 @@ class ImageUploadArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Usando sua extension de tamanho
     return Center(
       child: Container(
         height: context.percentHeight(0.18),

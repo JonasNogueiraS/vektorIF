@@ -98,7 +98,6 @@ class UploadMapScreen extends StatelessWidget {
 
                           const SizedBox(height: 30),
 
-                          // BOTÃO GENÉRICO
                           ButtomGeneric(
                             label: "Salvar",
                             onPressed: () {

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
 class ManagementOptionsList extends StatelessWidget {
-  // Callbacks para quando o usuário clicar em cada opção
+
   final VoidCallback onSectorsTap;
-  final VoidCallback onPeopleTap;
+  final VoidCallback onColabTap;
   final VoidCallback onMapTap;
 
   const ManagementOptionsList({
     super.key,
     required this.onSectorsTap,
-    required this.onPeopleTap,
+    required this.onColabTap,
     required this.onMapTap,
   });
 
@@ -41,7 +41,7 @@ class ManagementOptionsList extends StatelessWidget {
             title: "Gestão De Pessoa",
             subtitle: "Consulte, cadastre ou remova colaboradores",
             icon: Icons.people_alt_outlined,
-            onTap: onPeopleTap,
+            onTap: onColabTap,
           ),
           _buildDivider(),
           _buildListItem(
@@ -89,7 +89,7 @@ class ManagementOptionsList extends StatelessWidget {
       height: 1,
       thickness: 1,
       color: Colors.grey.shade100,
-      indent: 70, // Alinhamento estético
+      indent: 70, // Alinhamento
     );
   }
 }

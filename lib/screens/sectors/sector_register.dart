@@ -27,7 +27,6 @@ class _SectorRegisterScreenState extends State<SectorRegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.colorBackground,
-      // Stack para colocar a imagem de fundo atrás de tudo
       body: Stack(
         children: [
           const BackgroundImage(),
@@ -62,11 +61,9 @@ class _SectorRegisterScreenState extends State<SectorRegisterScreen> {
 
                   SizedBox(height: context.percentHeight(0.03)),
 
-                  // --- FORMULÁRIO ---
                   const ImageUploadArea(),
-
+                  
                   SizedBox(height: context.percentHeight(0.03)),
-
                   const FormLabel("Nome do Setor"),
                   FormInputField(
                     controller: _controller.nameController,

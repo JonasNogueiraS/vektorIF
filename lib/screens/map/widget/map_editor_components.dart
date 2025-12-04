@@ -5,7 +5,7 @@ import 'package:vektor_if/core/widgets/custom_back_button.dart';
 import 'package:vektor_if/screens/map/models/map_marker.dart';
 
 
-// --- 1. HEADER ---
+//  HEADER 
 class MapEditorHeader extends StatelessWidget {
   final VoidCallback onReset;
 
@@ -41,7 +41,7 @@ class MapEditorHeader extends StatelessWidget {
   }
 }
 
-// --- 2. BARRA DE FERRAMENTAS ---
+//  BARRA DE FERRAMENTAS 
 class MapToolsBar extends StatelessWidget {
   final int selectedIndex;
   final Function(int) onToolSelected;
@@ -93,7 +93,7 @@ class MapToolsBar extends StatelessWidget {
   }
 }
 
-// Sub-componente privado apenas para os botões da barra
+//privado apenas para os botões da barra
 class _ToolButton extends StatelessWidget {
   final bool isActive;
   final IconData icon;
@@ -141,8 +141,7 @@ class _ToolButton extends StatelessWidget {
   }
 }
 
-// --- 3. PINO DO MAPA (VISUAL) ---
-// Nota: Este widget deve ser usado dentro de um Stack
+// PINO DO MAPA  ---
 class MapMarkerPin extends StatelessWidget {
   final MapMarker marker;
   final bool isDeleteMode;
@@ -158,7 +157,6 @@ class MapMarkerPin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      // Ajuste de coordenadas para centralizar a ponta do pino
       left: marker.position.dx - 20,
       top: marker.position.dy - 40,
       child: GestureDetector(

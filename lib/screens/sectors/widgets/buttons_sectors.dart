@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/core/themes/size_extensions.dart';
-import 'package:vektor_if/core/widgets/buttom_generic.dart'; // Importe o botão novo
+import 'package:vektor_if/core/widgets/buttom_generic.dart'; 
 
 class ButtonsSectors extends StatelessWidget {
   final VoidCallback onSave;

@@ -35,6 +35,6 @@ class CollaboratorsController extends ChangeNotifier {
     nameController.dispose();
     emailController.dispose();
     phoneController.dispose();
-    super.dispose(); // ChangeNotifier não tem dispose nativo assim, mas é bom para limpar controllers se estendesse de algo mais complexo
+    super.dispose(); //bom para limpar controllers
   }
 }

@@ -50,7 +50,7 @@ class ManagementScreen extends StatelessWidget {
                     onSectorsTap: () {
                        Navigator.pushNamed(context, '/sectors-list');
                     },
-                    onPeopleTap: () {
+                    onColabTap: () {
                        Navigator.pushNamed(context, '/collaborators-list');
                     },
                     onMapTap: () {

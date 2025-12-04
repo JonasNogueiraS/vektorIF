@@ -35,7 +35,6 @@ class ManagementOptionCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Ícone com fundo azul claro
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(

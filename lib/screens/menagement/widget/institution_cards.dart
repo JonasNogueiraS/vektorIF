@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vektor_if/core/themes/app_theme.dart';
 
 class InstitutionCard extends StatelessWidget {
   final String name;
@@ -29,7 +30,6 @@ class InstitutionCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Área da Logo / Imagem
           Container(
             width: 60,
             height: 60,
@@ -49,7 +49,6 @@ class InstitutionCard extends StatelessWidget {
           ),
           const SizedBox(width: 16),
 
-          // Informações de Texto
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,7 +58,7 @@ class InstitutionCard extends StatelessWidget {
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
-                    color: Colors.black87, // Ou use AppTheme.colorBlackText
+                    color: AppTheme.colorBlackText
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -67,7 +66,7 @@ class InstitutionCard extends StatelessWidget {
                   address,
                   style: const TextStyle(
                     fontSize: 14,
-                    color: Colors.grey, // Ou use AppTheme.colorGrayText
+                    color: AppTheme.colorGrayText
                   ),
                 ),
               ],

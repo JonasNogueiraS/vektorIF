@@ -53,7 +53,6 @@ class MapRegister extends StatelessWidget {
 
                     SizedBox(height: context.percentHeight(0.03)),
 
-                    // --- BANNER DE IMAGEM (NOVO) ---
                     Center(
                       child: Container(
                         width: 200, 
@@ -102,7 +101,6 @@ class MapRegister extends StatelessWidget {
                       },
                     ),
 
-                    // --- OPÇÃO 2: ATUALIZAR MAPA ---
                     MapOptionCard(
                       title: "Atualizar Mapa",
                       subtitle:
