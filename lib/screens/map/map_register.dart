@@ -99,6 +99,7 @@ class MapRegister extends StatelessWidget {
                           "Faça upload de uma nova planta baixa ou mapa do setor.",
                       icon: Icons.add_location_alt_outlined,
                       onTap: () {
+                        Navigator.pushNamed(context, '/upload-map');
                       },
                     ),
 
