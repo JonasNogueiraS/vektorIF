@@ -1,4 +1,4 @@
-import 'package:vektor_if/models/colaborators_model.dart';
+import 'package:vektor_if/models/collaborators_model.dart';
 
 final List<EmployeeModel> mockEmployees = [
   const EmployeeModel(

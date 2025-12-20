@@ -3,20 +3,20 @@ import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/core/themes/size_extensions.dart';
 import 'package:vektor_if/core/widgets/background_image.dart';
 import 'package:vektor_if/core/widgets/custom_back_button.dart';
-import 'package:vektor_if/core/widgets/buttom_generic.dart';
-import 'package:vektor_if/models/data/colaborators_repository.dart';
-import 'package:vektor_if/screens/lists/widgets/colaborators_cards.dart';
-import 'package:vektor_if/screens/lists/widgets/search_colaborators.dart';
+import 'package:vektor_if/core/widgets/button_generic.dart';
+import 'package:vektor_if/models/data/collaborators_repository.dart';
+import 'package:vektor_if/screens/lists/widgets/collaborators_cards.dart';
+import 'package:vektor_if/core/widgets/search_field.dart';
 
 
-class ListDetailsColaborators extends StatefulWidget {
-  const ListDetailsColaborators({super.key});
+class ListDetailsCollaborators extends StatefulWidget {
+  const ListDetailsCollaborators({super.key});
 
   @override
-  State<ListDetailsColaborators> createState() => _ListDetailsColaboratorsState();
+  State<ListDetailsCollaborators> createState() => _ListDetailsCollaboratorsState();
 }
 
-class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
+class _ListDetailsCollaboratorsState extends State<ListDetailsCollaborators> {
 
 
   @override
@@ -40,7 +40,8 @@ class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
 
                   SizedBox(height: context.percentHeight(0.03)),
 
-                  SearchColaborators(
+                  SearchField(
+                    hintText: "Pesquisar colaborador...",
                     onSearchChanged: (value) {
                     },
                     onFilterTap: () {},
@@ -55,7 +56,7 @@ class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
                       itemBuilder: (context, index) {
                         final employee = mockEmployees[index];
                         
-                        return ColaboratorsCards(
+                        return CollaboratorsCards(
                           name: employee.name,
                           email: employee.email,
                           sector: employee.sector,
@@ -68,7 +69,7 @@ class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
 
                   SizedBox(height: context.percentHeight(0.02)),
 
-                  ButtomGeneric(
+                  ButtonGeneric(
                     label: "Adicionar Colaborador",
                     backgroundColor: AppTheme.colorButtons, 
                     onPressed: () {
@@ -88,7 +89,7 @@ class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const CustomBackButtom(),
+        const CustomBackButton(),
         Text(
           "Colaboradores",
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(

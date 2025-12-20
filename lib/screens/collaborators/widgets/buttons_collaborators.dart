@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/core/themes/size_extensions.dart';
-import 'package:vektor_if/core/widgets/buttom_generic.dart'; // Importe o botão novo
+import 'package:vektor_if/core/widgets/button_generic.dart'; // Importe o botão novo
 
 class ButtonsCollaborators extends StatelessWidget {
   final VoidCallback onSave;
@@ -19,7 +19,7 @@ class ButtonsCollaborators extends StatelessWidget {
       children: [
         // Botão CANCELAR
         Expanded(
-          child: ButtomGeneric(
+          child: ButtonGeneric(
             label: "Cancelar",
             onPressed: onCancel ?? () => Navigator.pop(context),
             backgroundColor: AppTheme.colorButtonCancel, 
@@ -31,7 +31,7 @@ class ButtonsCollaborators extends StatelessWidget {
         
         // Botão SALVAR
         Expanded(
-          child: ButtomGeneric(
+          child: ButtonGeneric(
             label: "Salvar",
             onPressed: onSave,
             backgroundColor: AppTheme.colorButtons, 

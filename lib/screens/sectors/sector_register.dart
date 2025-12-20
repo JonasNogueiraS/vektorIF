@@ -5,7 +5,9 @@ import 'package:vektor_if/core/widgets/background_image.dart';
 import 'package:vektor_if/core/widgets/custom_back_button.dart';
 import 'package:vektor_if/screens/sectors/controller/sector_register_controller.dart';
 import 'package:vektor_if/screens/sectors/widgets/buttons_sectors.dart';
-import 'package:vektor_if/screens/sectors/widgets/forms_sector_register.dart';
+import 'package:vektor_if/core/widgets/forms/form_input_field.dart';
+import 'package:vektor_if/core/widgets/forms/form_label.dart';
+import 'package:vektor_if/core/widgets/forms/image_upload_area.dart';
 
 class SectorRegisterScreen extends StatefulWidget {
   const SectorRegisterScreen({super.key});
@@ -45,7 +47,7 @@ class _SectorRegisterScreenState extends State<SectorRegisterScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const CustomBackButtom(),
+                      const CustomBackButton(),
                       Text(
                         "Gestão de Setores",
                         style: Theme.of(

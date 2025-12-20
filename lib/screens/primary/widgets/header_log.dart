@@ -26,7 +26,7 @@ class CustomHeader extends StatelessWidget {
           Positioned(
             top: 50,
             left: 24,
-            child: CustomBackButtom(),
+            child: CustomBackButton(),
           ),
         Positioned(
           top: size.height * 0.15,

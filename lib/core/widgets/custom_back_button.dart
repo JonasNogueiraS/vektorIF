@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 
-class CustomBackButtom extends StatelessWidget {
+class CustomBackButton extends StatelessWidget {
   final Color? color;
 
-  const CustomBackButtom({super.key, this.color});
+  const CustomBackButton({super.key, this.color});
 
   @override
   Widget build(BuildContext context) {
