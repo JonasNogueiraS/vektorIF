@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:vektor_if/core/widgets/buttom_generic.dart';
+import 'package:vektor_if/core/widgets/button_generic.dart';
 import 'package:vektor_if/core/widgets/custom_back_button.dart';
-import 'package:vektor_if/screens/menagement/widget/institution_cards.dart';
-import 'package:vektor_if/screens/menagement/widget/list_managements.dart';
+import 'package:vektor_if/screens/management/widget/institution_cards.dart';
+import 'package:vektor_if/screens/management/widget/list_managements.dart';
 import '../../../../../core/themes/app_theme.dart';
 import '../../../../../core/widgets/background_image.dart';
 
@@ -26,7 +26,7 @@ class ManagementScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      CustomBackButtom(),
+                      CustomBackButton(),
                       Text(
                         "Gerenciamento",
                         style: Theme.of(
@@ -80,7 +80,7 @@ class ManagementScreen extends StatelessWidget {
                   _buildTextFieldInput(initialValue: "Av. Alguma Coisa"),
                   const SizedBox(height: 10),
 
-                  ButtomGeneric(
+                  ButtonGeneric(
                     label: "Salvar Alterações",
                     onPressed: () {
                     },

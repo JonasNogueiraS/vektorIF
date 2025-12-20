@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 
-class ButtomGeneric extends StatelessWidget {
+class ButtonGeneric extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
   final Color backgroundColor;
   final Color textColor;
   final bool isLoading; // mostra loading se precisar
 
-  const ButtomGeneric({
+  const ButtonGeneric({
     super.key,
     required this.label,
     required this.onPressed,

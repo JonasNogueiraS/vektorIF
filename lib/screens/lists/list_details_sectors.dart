@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/core/themes/size_extensions.dart';
 import 'package:vektor_if/core/widgets/background_image.dart';
-import 'package:vektor_if/core/widgets/buttom_generic.dart';
+import 'package:vektor_if/core/widgets/button_generic.dart';
 import 'package:vektor_if/core/widgets/custom_back_button.dart';
 import 'package:vektor_if/models/data/sectors_repository.dart';
-import 'package:vektor_if/screens/lists/widgets/search_colaborators.dart'; 
+import 'package:vektor_if/core/widgets/search_field.dart';
 import 'widgets/sector_card.dart';
 
 class ListDetailsSectors extends StatefulWidget {
@@ -39,7 +39,8 @@ class _ListDetailsSectorsState extends State<ListDetailsSectors> {
 
                   SizedBox(height: context.percentHeight(0.03)),
 
-                  SearchColaborators(
+                  SearchField(
+                    hintText: "Pesquisar setor...",
                     onSearchChanged: (value) {},
                     onFilterTap: () {},
                   ),
@@ -67,7 +68,7 @@ class _ListDetailsSectorsState extends State<ListDetailsSectors> {
                   SizedBox(height: context.percentHeight(0.02)),
 
                   // Botão Adicionar
-                  ButtomGeneric(
+                  ButtonGeneric(
                     label: "Adicionar Setor",
                     backgroundColor: AppTheme.colorButtons,
                     onPressed: () {
@@ -87,7 +88,7 @@ class _ListDetailsSectorsState extends State<ListDetailsSectors> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const CustomBackButtom(),
+        const CustomBackButton(),
         Text(
           "Setores",
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(

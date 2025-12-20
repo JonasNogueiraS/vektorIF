@@ -21,7 +21,7 @@ class MapEditorHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const CustomBackButtom(),
+          const CustomBackButton(),
           Text(
             "Mapear Setores",
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(

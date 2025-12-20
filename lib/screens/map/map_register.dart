@@ -31,7 +31,7 @@ class MapRegister extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const CustomBackButtom(),
+                        const CustomBackButton(),
                         Text(
                           "Gestão de Mapas",
                           style: Theme.of(context).textTheme.headlineSmall

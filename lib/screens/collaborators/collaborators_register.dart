@@ -5,7 +5,9 @@ import 'package:vektor_if/core/widgets/background_image.dart';
 import 'package:vektor_if/core/widgets/custom_back_button.dart';
 import 'package:vektor_if/screens/collaborators/controller/collaborators_controller.dart';
 import 'package:vektor_if/screens/collaborators/widgets/buttons_collaborators.dart';
-import 'package:vektor_if/screens/sectors/widgets/forms_sector_register.dart';
+import 'package:vektor_if/core/widgets/forms/form_input_field.dart';
+import 'package:vektor_if/core/widgets/forms/form_label.dart';
+import 'package:vektor_if/core/widgets/forms/image_upload_area.dart';
 
 class CollaboratorsRegister extends StatefulWidget {
   const CollaboratorsRegister({super.key});
@@ -38,7 +40,7 @@ class _CollaboratorsRegisterState extends State<CollaboratorsRegister> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const CustomBackButtom(),
+                      const CustomBackButton(),
                       Text(
                         "Gestão de Colaborador",
                         style: Theme.of(

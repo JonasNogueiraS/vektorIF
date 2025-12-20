@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 
-class ColaboratorsCards extends StatelessWidget {
+class CollaboratorsCards extends StatelessWidget {
   final String name;
   final String email;
   final String sector;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
-  const ColaboratorsCards({
+  const CollaboratorsCards({
     super.key,
     required this.name,
     required this.email,

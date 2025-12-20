@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:vektor_if/core/widgets/buttom_generic.dart';
+import 'package:vektor_if/core/widgets/button_generic.dart';
 
-class MapFooterButtom extends StatelessWidget {
+class MapFooterButton extends StatelessWidget {
   final VoidCallback? onSave;
   final bool isEnabled;
 
-  const MapFooterButtom({
+  const MapFooterButton({
     super.key,
     required this.onSave,
     this.isEnabled = true,
@@ -25,7 +25,7 @@ class MapFooterButtom extends StatelessWidget {
           ),
         ],
       ),
-      child: ButtomGeneric(
+      child: ButtonGeneric(
         label: "Finalizar Mapeamento",
         onPressed: isEnabled ? onSave : null,
       ),

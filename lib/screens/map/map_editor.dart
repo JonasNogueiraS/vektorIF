@@ -5,7 +5,7 @@ import 'package:vektor_if/screens/map/modal/sector_modal.dart';
 import 'package:vektor_if/screens/map/models/map_marker.dart';
 import 'package:vektor_if/screens/map/widget/interactve_area.dart';
 import 'package:vektor_if/screens/map/widget/map_editor_components.dart';
-import 'package:vektor_if/screens/map/widget/map_footer_buttom.dart';
+import 'package:vektor_if/screens/map/widget/map_footer_button.dart';
 
 class MapEditor extends StatefulWidget {
   final String? imagePath;
@@ -63,7 +63,7 @@ class _MapEditorState extends State<MapEditor> {
                   ),
                 ),
 
-                MapFooterButtom(isEnabled: _markers.isNotEmpty, onSave: _saveMap),
+                MapFooterButton(isEnabled: _markers.isNotEmpty, onSave: _saveMap),
               ],
             ),
           ),

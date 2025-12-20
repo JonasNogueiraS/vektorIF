@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 
-class SearchColaborators extends StatelessWidget {
+class SearchField extends StatelessWidget {
   final Function(String) onSearchChanged;
   final VoidCallback onFilterTap;
+  final String hintText;
 
-  const SearchColaborators({
+  const SearchField({
     super.key,
     required this.onSearchChanged,
     required this.onFilterTap,
+    this.hintText = "Pesquisar...",
   });
 
   @override
@@ -30,11 +32,11 @@ class SearchColaborators extends StatelessWidget {
             ),
             child: TextField(
               onChanged: onSearchChanged,
-              decoration: const InputDecoration(
-                hintText: "Pesquisar colaborador...",
-                prefixIcon: Icon(Icons.search, color: Colors.grey),
+              decoration: InputDecoration(
+                hintText: hintText,
+                prefixIcon: const Icon(Icons.search, color: Colors.grey),
                 border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(vertical: 14),
+                contentPadding: const EdgeInsets.symmetric(vertical: 14),
               ),
             ),
           ),
