@@ -3,9 +3,9 @@ import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/core/themes/size_extensions.dart';
 import 'package:vektor_if/core/widgets/background_image.dart';
 import 'package:vektor_if/core/widgets/custom_back_button.dart';
+import 'package:vektor_if/core/widgets/forms_widgets.dart';
 import 'package:vektor_if/screens/collaborators/controller/collaborators_controller.dart';
 import 'package:vektor_if/screens/collaborators/widgets/buttons_collaborators.dart';
-import 'package:vektor_if/screens/sectors/widgets/forms_sector_register.dart';
 
 class CollaboratorsRegister extends StatefulWidget {
   const CollaboratorsRegister({super.key});
@@ -54,12 +54,12 @@ class _CollaboratorsRegisterState extends State<CollaboratorsRegister> {
 
                   SizedBox(height: context.percentHeight(0.03)),
 
-                  const ImageUploadArea(),
+                  RectangularImagePicker(onTap: () {}),
 
                   SizedBox(height: context.percentHeight(0.03)),
 
                   const FormLabel("Nome completo"),
-                  FormInputField(
+                  GenericInputField(
                     controller: _controller.nameController,
                     hint: "Ex: Jonas Sena",
                   ),
@@ -67,7 +67,7 @@ class _CollaboratorsRegisterState extends State<CollaboratorsRegister> {
                   SizedBox(height: context.percentHeight(0.02)),
 
                   const FormLabel("Email"),
-                  FormInputField(
+                  GenericInputField(
                     controller: _controller.emailController,
                     hint: "Ex: jonas@email.com",
                     keyboardType: TextInputType.emailAddress,
@@ -76,7 +76,7 @@ class _CollaboratorsRegisterState extends State<CollaboratorsRegister> {
                   SizedBox(height: context.percentHeight(0.02)),
 
                   const FormLabel("Telefone"),
-                  FormInputField(
+                  GenericInputField(
                     controller: _controller.phoneController,
                     hint: "(99) 99999-9999",
                     keyboardType: TextInputType.phone,

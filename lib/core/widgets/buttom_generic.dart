@@ -22,14 +22,14 @@ class ButtomGeneric extends StatelessWidget {
     return SizedBox(
       width: double.infinity, // Ocupa toda a largura disponível 
       child: ElevatedButton(
-        onPressed: isLoading ? null : onPressed, // Desabilita se estiver carregando
+        onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          elevation: 0, // remove a sombra para ficar mais flat
+          elevation: 0, // remove a sombra 
         ),
         child: isLoading
             ? SizedBox(

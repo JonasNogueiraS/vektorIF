@@ -26,7 +26,6 @@ class ManagementScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      CustomBackButtom(),
                       Text(
                         "Gerenciamento",
                         style: Theme.of(

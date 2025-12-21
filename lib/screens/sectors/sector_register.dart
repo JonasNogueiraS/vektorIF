@@ -3,9 +3,10 @@ import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/core/themes/size_extensions.dart';
 import 'package:vektor_if/core/widgets/background_image.dart';
 import 'package:vektor_if/core/widgets/custom_back_button.dart';
+import 'package:vektor_if/core/widgets/forms_widgets.dart';
 import 'package:vektor_if/screens/sectors/controller/sector_register_controller.dart';
 import 'package:vektor_if/screens/sectors/widgets/buttons_sectors.dart';
-import 'package:vektor_if/screens/sectors/widgets/forms_sector_register.dart';
+
 
 class SectorRegisterScreen extends StatefulWidget {
   const SectorRegisterScreen({super.key});
@@ -61,13 +62,20 @@ class _SectorRegisterScreenState extends State<SectorRegisterScreen> {
 
                   SizedBox(height: context.percentHeight(0.03)),
 
-                  const ImageUploadArea(),
+                  CircularImagePicker(
+                    label: "Adicione uma foto da instituição",
+                    onTap: (){
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Abrir galeria")),
+                      );
+                    }),
                   
                   SizedBox(height: context.percentHeight(0.03)),
                   const FormLabel("Nome do Setor"),
-                  FormInputField(
+                  GenericInputField(
                     controller: _controller.nameController,
                     hint: "Ex: Coordenação de TI",
+                    outlined: false,
                   ),
 
                   SizedBox(height: context.percentHeight(0.02)),
@@ -79,7 +87,7 @@ class _SectorRegisterScreenState extends State<SectorRegisterScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const FormLabel("E-mail do Setor"),
-                          FormInputField(
+                          GenericInputField(
                             controller: _controller.emailController,
                             hint: "setor@ifma.edu.br",
                             enabled: !_controller.noEmail,
@@ -111,7 +119,7 @@ class _SectorRegisterScreenState extends State<SectorRegisterScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const FormLabel("Telefone"),
-                          FormInputField(
+                          GenericInputField(
                             controller: _controller.phoneController,
                             hint: "(99) 99999-9999",
                             keyboardType: TextInputType.phone,
@@ -138,7 +146,7 @@ class _SectorRegisterScreenState extends State<SectorRegisterScreen> {
                   SizedBox(height: context.percentHeight(0.02)),
 
                   const FormLabel("Descrição"),
-                  FormInputField(
+                  GenericInputField(
                     controller: _controller.descriptionController,
                     hint: "Breve descrição das atividades...",
                     maxLines: 4,

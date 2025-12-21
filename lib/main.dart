@@ -10,6 +10,7 @@ import 'package:vektor_if/screens/menagement/management.dart';
 import 'package:vektor_if/screens/primary/enter_app.dart';
 import 'package:vektor_if/screens/home/home_map.dart';
 import 'package:vektor_if/screens/primary/institution_list.dart';
+import 'package:vektor_if/screens/register/register_user.dart';
 import 'package:vektor_if/screens/sectors/sector_register.dart';
 
 void main() {
@@ -39,6 +40,7 @@ class VektorApp extends StatelessWidget {
         '/map-register': (context) => const MapRegister(),
         '/upload-map': (context) => const UploadMapScreen(),
         '/map-editor' : (context) => const MapEditor(),
+        '/register_user':(context) => const RegisterScreen(),
       },
     );
   }

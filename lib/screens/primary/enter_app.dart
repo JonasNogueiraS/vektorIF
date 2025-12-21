@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/screens/primary/widgets/header_log.dart';
@@ -74,6 +75,10 @@ class EnterApp extends StatelessWidget {
                             fontWeight: FontWeight.w600,
                             decoration: TextDecoration.underline,
                           ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.pushNamed(context, '/register_user');
+                            },
                         ),
                       ],
                     ),

@@ -25,14 +25,13 @@ class _HomeMapState extends State<HomeMap> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const HomeHeader(), // Adicionei const para otimização
+            const HomeHeader(), 
             FilterList(
               filters: filters,
               selectedFilter: selectedFilter,
               onFilterSelected: (val) => setState(() => selectedFilter = val),
             ),
             
-            // --- AQUI ESTÁ A MUDANÇA ---
             Padding(
               padding: const EdgeInsets.only(left: 24, right: 24, top: 20, bottom: 10),
               child: Text(
