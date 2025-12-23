@@ -13,6 +13,7 @@ class RegisterScreen extends StatefulWidget {
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
+
 class _RegisterScreenState extends State<RegisterScreen> {
   final _controller = RegisterController();
 
@@ -44,6 +45,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
           context,
           '/management',
           (route) => false,
+        );
+      },
+      onError: (message) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            backgroundColor: Colors.red, // erro
+            behavior: SnackBarBehavior.floating,
+          ),
         );
       },
     );

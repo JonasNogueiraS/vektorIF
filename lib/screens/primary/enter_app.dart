@@ -60,7 +60,7 @@ class EnterApp extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 16),
-                  
+
                   const Row(
                     children: [
                       Expanded(child: Divider()),
@@ -79,8 +79,7 @@ class EnterApp extends StatelessWidget {
                   SizedBox(
                     height: 50,
                     child: OutlinedButton(
-                      onPressed: () =>
-                          Navigator.pushNamed(context, '/login-screen'),
+                      onPressed: () => Navigator.pushNamed(context, '/login'),
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(
                           color: AppTheme.colorButtons,
@@ -135,7 +134,7 @@ class EnterApp extends StatelessWidget {
                       ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () =>
-                            Navigator.pushNamed(context, '/register-user'),
+                            Navigator.pushNamed(context, '/register'),
                     ),
                   ],
                 ),
