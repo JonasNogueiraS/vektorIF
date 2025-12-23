@@ -3,8 +3,9 @@ import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/core/widgets/background_image.dart';
 import 'package:vektor_if/core/widgets/buttom_generic.dart';
 import 'package:vektor_if/core/widgets/custom_back_button.dart';
-import 'package:vektor_if/core/widgets/forms_widgets.dart'; 
+import 'package:vektor_if/core/widgets/forms_widgets.dart';
 import 'package:vektor_if/core/widgets/success_feedback_dialog.dart';
+import 'package:vektor_if/screens/register/controller/register_controller.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -12,53 +13,40 @@ class RegisterScreen extends StatefulWidget {
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
-
 class _RegisterScreenState extends State<RegisterScreen> {
-  // Controllers
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
-  final _institutionNameController = TextEditingController();
-  final _addressController = TextEditingController();
-
-  // Estados
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
-  bool _isLoading = false;
+  final _controller = RegisterController();
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    _institutionNameController.dispose();
-    _addressController.dispose();
+    _controller.dispose(); //limpar os text fields
     super.dispose();
   }
+  //conecta a interface com a Lógica
+  void _onSave() {
+    _controller.registerUser(
+      onSuccess: () async {
+        //feedback visual
+        if (!mounted) return;
 
-  Future<void> _handleRegister() async {
-    setState(() => _isLoading = true);
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (!mounted) return;
-    setState(() => _isLoading = false);
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const SuccessFeedbackDialog(
-        title: "Cadastro Realizado!",
-        subtitle: "Você será redirecionado para o gerenciamento...",
-      ),
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const SuccessFeedbackDialog(
+            title: "Cadastro Realizado!",
+            subtitle: "Você será redirecionado para o gerenciamento...",
+          ),
+        );
+        // Aguarda e Navega
+        await Future.delayed(const Duration(seconds: 2));
+        if (!mounted) return;
+        Navigator.of(context).pop();
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/management',
+          (route) => false,
+        );
+      },
     );
-
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (!mounted) return;
-    Navigator.of(context).pop();
-    Navigator.pushNamedAndRemoveUntil(context, '/management', (route) => false);
   }
 
   @override
@@ -72,7 +60,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header (Botão Voltar e Título)
+                // --- HEADER ---
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
@@ -98,19 +86,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 20),
 
-                // Card do Formulário
+                // --- FORMULÁRIO ---
                 Expanded(
                   child: Container(
                     width: double.infinity,
                     decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(
-                          10,
-                        ),
+                        topLeft: Radius.circular(10),
                         topRight: Radius.circular(10),
                       ),
                       boxShadow: [
@@ -123,87 +108,95 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.all(24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // DADOS DO USUÁRIO 
-                          const FormLabel("Nome completo"),
-                          GenericInputField(
-                            controller: _nameController,
-                            hint: "ex: Joao da Silva",
-                            outlined: true, // Estilo Branco com Borda
-                          ),
+                      child: ListenableBuilder(
+                        // ListenableBuilder escuta o controller.
+                        listenable: _controller,
+                        builder: (context, child) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // DADOS DO USUÁRIO
+                              const FormLabel("Nome completo"),
+                              GenericInputField(
+                                controller: _controller.nameController,
+                                hint: "ex: Joao da Silva",
+                                outlined: true,
+                              ),
 
-                          const FormLabel("Informe o e-mail"),
-                          GenericInputField(
-                            controller: _emailController,
-                            hint: "emaildousuario@gmail.com",
-                            keyboardType: TextInputType.emailAddress,
-                            outlined: true,
-                          ),
+                              const FormLabel("Informe o e-mail"),
+                              GenericInputField(
+                                controller: _controller.emailController,
+                                hint: "emaildousuario@gmail.com",
+                                keyboardType: TextInputType.emailAddress,
+                                outlined: true,
+                              ),
 
-                          const FormLabel("Informe a senha"),
-                          GenericInputField(
-                            controller: _passwordController,
-                            hint: "********",
-                            outlined: true,
-                            isPassword: true,
-                            obscureText: _obscurePassword,
-                            onToggleVisibility: () => setState(
-                              () => _obscurePassword = !_obscurePassword,
-                            ),
-                          ),
+                              const FormLabel("Informe a senha"),
+                              GenericInputField(
+                                controller: _controller.passwordController,
+                                hint: "********",
+                                outlined: true,
+                                isPassword: true,
+                                obscureText: _controller.obscurePassword,
+                                onToggleVisibility:
+                                    _controller.togglePasswordVisibility,
+                              ),
 
-                          const FormLabel("Confirme a senha"),
-                          GenericInputField(
-                            controller: _confirmPasswordController,
-                            hint: "********",
-                            outlined: true,
-                            isPassword: true,
-                            obscureText: _obscureConfirmPassword,
-                            onToggleVisibility: () => setState(
-                              () => _obscureConfirmPassword =
-                                  !_obscureConfirmPassword,
-                            ),
-                          ),
-                          const SizedBox(height: 30),
-                          // DADOS DA INSTITUIÇÃO
-                          CircularImagePicker(
-                            label: "Adicione uma foto da instituição",
-                            onTap: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Abrir galeria..."),
-                                ),
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 16),
+                              const FormLabel("Confirme a senha"),
+                              GenericInputField(
+                                controller:
+                                    _controller.confirmPasswordController,
+                                hint: "********",
+                                outlined: true,
+                                isPassword: true,
+                                obscureText: _controller.obscureConfirmPassword,
+                                onToggleVisibility:
+                                    _controller.toggleConfirmPasswordVisibility,
+                              ),
 
-                          const FormLabel("Nome da Instituição"),
-                          GenericInputField(
-                            controller: _institutionNameController,
-                            hint: "ex: Instituto Federal do Maranhão",
-                            outlined: true,
-                          ),
+                              const SizedBox(height: 30),
 
-                          const FormLabel("Endereço"),
-                          GenericInputField(
-                            controller: _addressController,
-                            hint: "ex: Av. Santos do Santos",
-                            outlined: true,
-                          ),
-                          const SizedBox(height: 30),
+                              // DADOS DA INSTITUIÇÃO
+                              CircularImagePicker(
+                                label: "Adicione uma foto da instituição",
+                                onTap: () {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("Abrir galeria..."),
+                                    ),
+                                  );
+                                },
+                              ),
 
-                          // --- BOTÃO SALVAR ---
-                          ButtomGeneric(
-                            label: "Salvar",
-                            onPressed: _handleRegister,
-                            isLoading: _isLoading,
-                          ),
+                              const SizedBox(height: 16),
 
-                          const SizedBox(height: 20),
-                        ],
+                              const FormLabel("Nome da Instituição"),
+                              GenericInputField(
+                                controller:
+                                    _controller.institutionNameController,
+                                hint: "ex: Instituto Federal do Maranhão",
+                                outlined: true,
+                              ),
+
+                              const FormLabel("Endereço"),
+                              GenericInputField(
+                                controller: _controller.addressController,
+                                hint: "ex: Av. Santos do Santos",
+                                outlined: true,
+                              ),
+
+                              const SizedBox(height: 30),
+
+                              // BOTÃO SALVAR
+                              ButtomGeneric(
+                                label: "Salvar",
+                                onPressed: _onSave,
+                                isLoading: _controller.isLoading,
+                              ),
+                              const SizedBox(height: 20),
+                            ],
+                          );
+                        },
                       ),
                     ),
                   ),

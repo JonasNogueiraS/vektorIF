@@ -16,7 +16,7 @@ class FormLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      // Padding padrão ou customizado
+      // Padding
       padding: padding ?? const EdgeInsets.only(bottom: 8.0, left: 4, top: 10),
       child: Text(
         text,
@@ -30,7 +30,7 @@ class FormLabel extends StatelessWidget {
   }
 }
 
-// 2. INPUT FIELD GENÉRICO (Serve para Texto, Senha e Multiline)
+//INPUT FIELD GENÉRICO 
 class GenericInputField extends StatelessWidget {
   final TextEditingController controller;
   final String? hint;
@@ -43,7 +43,7 @@ class GenericInputField extends StatelessWidget {
   final bool obscureText;
   final VoidCallback? onToggleVisibility;
 
-  // Parâmetros de Estilo (Para diferenciar o estilo Cinza do Branco com Borda)
+  // Parâmetros de Estilo
   final bool outlined; 
 
   const GenericInputField({
@@ -95,7 +95,7 @@ class GenericInputField extends StatelessWidget {
   }
 }
 
-// 3. UPLOAD DE IMAGEM RETANGULAR (Para Setores/Colaboradores)
+// 3. UPLOAD DE IMAGEM (Para Setores/Colaboradores)
 class RectangularImagePicker extends StatelessWidget {
   final VoidCallback? onTap;
 
@@ -153,7 +153,7 @@ class CircularImagePicker extends StatelessWidget {
             width: 80,
             decoration: BoxDecoration(
               color: const Color(0xFFE3F2FD), // Azul claro
-              shape: BoxShape.circle, // Mudamos para Círculo conforme design da tela de cadastro
+              shape: BoxShape.circle, 
               border: Border.all(color: AppTheme.primaryBlue, width: 1),
             ),
             child: const Icon(Icons.camera_alt, color: Colors.black87, size: 30),
