@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/core/themes/size_extensions.dart';
 import 'package:vektor_if/core/widgets/background_image.dart';
-import 'package:vektor_if/core/widgets/custom_back_button.dart';
 import 'package:vektor_if/core/widgets/forms_widgets.dart';
+import 'package:vektor_if/core/widgets/success_feedback_dialog.dart';
 import 'package:vektor_if/screens/sectors/controller/sector_register_controller.dart';
 import 'package:vektor_if/screens/sectors/widgets/buttons_sectors.dart';
-
+import 'package:vektor_if/screens/sectors/widgets/sector_form_components.dart';
 
 class SectorRegisterScreen extends StatefulWidget {
   const SectorRegisterScreen({super.key});
@@ -22,6 +22,41 @@ class _SectorRegisterScreenState extends State<SectorRegisterScreen> {
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  void _handleSave() {
+    _controller.saveSector(
+      onSuccess: () {
+        if (!mounted) return;
+
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const SuccessFeedbackDialog(
+            title: "Sucesso!",
+            subtitle: "O setor foi cadastrado corretamente.",
+          ),
+        );
+        
+        Future.delayed(const Duration(milliseconds: 1500), () {
+          if (mounted) {
+            Navigator.pop(context); 
+            Navigator.pop(context); 
+          }
+        });
+      },
+      onError: (msg) {
+        if (!mounted) return; 
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(msg),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -41,21 +76,14 @@ class _SectorRegisterScreenState extends State<SectorRegisterScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 10),
-
+                  
                   // Header
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const CustomBackButtom(),
                       Text(
                         "Gestão de Setores",
-                        style: Theme.of(
-                          context,
-                        ).textTheme.headlineSmall?.copyWith(fontSize: 20),
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.menu, color: Color(0xff49454F)),
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: 20),
                       ),
                     ],
                   ),
@@ -64,13 +92,15 @@ class _SectorRegisterScreenState extends State<SectorRegisterScreen> {
 
                   CircularImagePicker(
                     label: "Adicione uma foto da instituição",
-                    onTap: (){
+                    onTap: () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Abrir galeria")),
+                        const SnackBar(content: Text("Em breve!")),
                       );
-                    }),
-                  
+                    },
+                  ),
+
                   SizedBox(height: context.percentHeight(0.03)),
+
                   const FormLabel("Nome do Setor"),
                   GenericInputField(
                     controller: _controller.nameController,
@@ -84,59 +114,37 @@ class _SectorRegisterScreenState extends State<SectorRegisterScreen> {
                     listenable: _controller,
                     builder: (context, child) {
                       return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const FormLabel("E-mail do Setor"),
-                          GenericInputField(
-                            controller: _controller.emailController,
+                          //Email
+                          ToggleableContactInput(
+                            label: "E-mail do Setor",
                             hint: "setor@ifma.edu.br",
-                            enabled: !_controller.noEmail,
+                            controller: _controller.emailController,
+                            isDisabled: _controller.noEmail,
+                            checkboxLabel: "Não possui e-mail",
+                            onToggle: _controller.toggleNoEmail,
                           ),
-                          Row(
-                            children: [
-                              Checkbox(
-                                value: _controller.noEmail,
-                                activeColor: AppTheme.colorLogo,
-                                onChanged: _controller.toggleNoEmail,
-                              ),
-                              const Text(
-                                "Não possui e-mail",
-                                style: TextStyle(fontSize: 14),
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
-                    },
-                  ),
 
-                  SizedBox(height: context.percentHeight(0.01)),
+                          SizedBox(height: context.percentHeight(0.01)),
 
-                  ListenableBuilder(
-                    listenable: _controller,
-                    builder: (context, child) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const FormLabel("Telefone"),
-                          GenericInputField(
-                            controller: _controller.phoneController,
+                          //Campo Telefone
+                          ToggleableContactInput(
+                            label: "Telefone",
                             hint: "(99) 99999-9999",
+                            controller: _controller.phoneController,
+                            isDisabled: _controller.noPhone,
+                            checkboxLabel: "Não possui telefone",
+                            onToggle: _controller.toggleNoPhone,
                             keyboardType: TextInputType.phone,
-                            enabled: !_controller.noPhone,
                           ),
-                          Row(
-                            children: [
-                              Checkbox(
-                                value: _controller.noPhone,
-                                activeColor: AppTheme.colorLogo,
-                                onChanged: _controller.toggleNoPhone,
-                              ),
-                              const Text(
-                                "Não possui telefone",
-                                style: TextStyle(fontSize: 14),
-                              ),
-                            ],
+                          
+                          SizedBox(height: context.percentHeight(0.02)),
+
+                          //Dropdown 
+                          SectorCategoryDropdown(
+                            selectedCategory: _controller.selectedCategory,
+                            categories: _controller.categories,
+                            onChanged: _controller.setCategory,
                           ),
                         ],
                       );
@@ -154,9 +162,15 @@ class _SectorRegisterScreenState extends State<SectorRegisterScreen> {
 
                   SizedBox(height: context.percentHeight(0.05)),
 
-                  // Botões
-                  ButtonsSectors(
-                    onSave: _controller.saveSector),
+                  ListenableBuilder(
+                    listenable: _controller,
+                    builder: (context, child) {
+                      if (_controller.isLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      return ButtonsSectors(onSave: _handleSave);
+                    },
+                  ),
 
                   SizedBox(height: context.percentHeight(0.05)),
                 ],

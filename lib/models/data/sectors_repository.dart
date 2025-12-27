@@ -1,29 +1,50 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:vektor_if/models/sectors_model.dart';
 
-final List<SectorModel> mockSectors = [
-  const SectorModel(
-    name: "Recepção Geral",
-    phone: "(99) 3521-0000",
-    description: "Primeiro ponto de contato, informações gerais e encaminhamento de visitantes.",
-  ),
-  const SectorModel(
-    name: "Coordenação de TI",
-    phone: "(99) 3521-1234",
-    description: "Suporte técnico, manutenção de laboratórios e desenvolvimento de sistemas.",
-  ),
-  const SectorModel(
-    name: "Banheiro",
-    phone: "Sem número",
-    description: "Sem descrição",
-  ),
-  const SectorModel(
-    name: "Biblioteca",
-    phone: "(99) 3521-5555",
-    description: "Empréstimo de livros, espaço para estudo e catalogação de acervo.",
-  ),
-  const SectorModel(
-    name: "Departamento de Ensino",
-    phone: "(99) 3521-9999",
-    description: "Gestão pedagógica, planejamento de aulas e coordenação de cursos.",
-  ),
-];
+class SectorsRepository {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  String? get _userId => _auth.currentUser?.uid;
+
+  // Adicionar
+  Future<void> addSector(SectorModel sector) async {
+    if (_userId == null) throw Exception('Usuário não autenticado.');
+
+    await _firestore
+        .collection('institutions')
+        .doc(_userId)
+        .collection('sectors')
+        .add(sector.toMap());
+  }
+
+  // Listar (Stream)
+  Stream<List<SectorModel>> getSectorsStream() {
+    if (_userId == null) return const Stream.empty();
+
+    return _firestore
+        .collection('institutions')
+        .doc(_userId)
+        .collection('sectors')
+        .orderBy('name')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return SectorModel.fromMap(doc.data(), doc.id);
+      }).toList();
+    });
+  }
+
+  // Deletar
+  Future<void> deleteSector(String sectorId) async {
+    if (_userId == null) return;
+
+    await _firestore
+        .collection('institutions')
+        .doc(_userId)
+        .collection('sectors')
+        .doc(sectorId)
+        .delete();
+  }
+}

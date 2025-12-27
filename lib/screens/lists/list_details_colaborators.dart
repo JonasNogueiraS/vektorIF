@@ -8,17 +8,15 @@ import 'package:vektor_if/models/data/colaborators_repository.dart';
 import 'package:vektor_if/screens/lists/widgets/colaborators_cards.dart';
 import 'package:vektor_if/screens/lists/widgets/search_colaborators.dart';
 
-
 class ListDetailsColaborators extends StatefulWidget {
   const ListDetailsColaborators({super.key});
 
   @override
-  State<ListDetailsColaborators> createState() => _ListDetailsColaboratorsState();
+  State<ListDetailsColaborators> createState() =>
+      _ListDetailsColaboratorsState();
 }
 
 class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,16 +33,12 @@ class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
               child: Column(
                 children: [
                   const SizedBox(height: 10),
-                  
+
                   _buildHeader(context),
 
                   SizedBox(height: context.percentHeight(0.03)),
 
-                  SearchColaborators(
-                    onSearchChanged: (value) {
-                    },
-                    onFilterTap: () {},
-                  ),
+                  SearchList(onSearchChanged: (value) {}, onFilterTap: () {}),
 
                   SizedBox(height: context.percentHeight(0.02)),
 
@@ -54,7 +48,7 @@ class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
                       separatorBuilder: (_, __) => const SizedBox(height: 12),
                       itemBuilder: (context, index) {
                         final employee = mockEmployees[index];
-                        
+
                         return ColaboratorsCards(
                           name: employee.name,
                           email: employee.email,
@@ -70,7 +64,7 @@ class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
 
                   ButtomGeneric(
                     label: "Adicionar Colaborador",
-                    backgroundColor: AppTheme.colorButtons, 
+                    backgroundColor: AppTheme.colorButtons,
                     onPressed: () {
                       Navigator.pushNamed(context, '/collaborators-register');
                     },
@@ -92,9 +86,9 @@ class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
         Text(
           "Colaboradores",
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         IconButton(
           onPressed: () {},

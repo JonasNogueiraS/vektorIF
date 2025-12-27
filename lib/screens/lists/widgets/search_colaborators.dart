@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 
-class SearchColaborators extends StatelessWidget {
+class SearchList extends StatelessWidget {
   final Function(String) onSearchChanged;
   final VoidCallback onFilterTap;
 
-  const SearchColaborators({
+  const SearchList({
     super.key,
     required this.onSearchChanged,
     required this.onFilterTap,
