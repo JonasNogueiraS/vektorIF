@@ -1,29 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:vektor_if/core/themes/size_extensions.dart';
 import 'package:vektor_if/core/widgets/background_image.dart';
-import 'package:vektor_if/screens/home/widgets/settings_menu_buttons.dart';
+import 'package:vektor_if/core/widgets/menu_buttons.dart';
 import '../../../../../core/themes/app_theme.dart';
 
 class HomeHeader extends StatelessWidget {
-
-
   const HomeHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Verifica se existe usuário logado
+    final user = FirebaseAuth.instance.currentUser;
+    final isManager = user != null;
+
+    //Decide quais opções mostrar no menu
+    final List<MenuOption> menuOptions = isManager 
+      ? _buildManagerOptions(context) 
+      : _buildVisitorOptions(context);
+
     return SizedBox(
       height: context.percentHeight(0.30),
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          BackgroundImage(),
-          // Textos
+          const BackgroundImage(),
+          // Conteúdo
           Padding(
             padding: EdgeInsets.fromLTRB(24, context.percentHeight(0.05), 24, 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Ícones
+                // Linha de Ícones (Notificação + Menu)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -32,15 +40,16 @@ class HomeHeader extends StatelessWidget {
                       icon: const Icon(Icons.notifications_none),
                       color: AppTheme.colorBlackText,
                     ),
-                    const SettingsMenuButton(),
+                    // lista de opções para o botão genérico
+                    SettingsMenuButton(options: menuOptions),
                   ],
                 ),
 
-                // Título
+                // Título da Instituição
                 SizedBox(
                   width: context.percentWidth(0.65),
                   child: Text(
-                    "Instituto Federal do Maranhão - IFMA",
+                    "Instituto Federal do Maranhão - IFMA", // Futuramente virá do banco
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -52,7 +61,7 @@ class HomeHeader extends StatelessWidget {
             ),
           ),
 
-          //Barra de Busca
+          // Barra de Busca
           Positioned(
             bottom: 0,
             left: 24,
@@ -90,5 +99,51 @@ class HomeHeader extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  // OPÇÕES PARA GERENTE
+  List<MenuOption> _buildManagerOptions(BuildContext context) {
+    return [
+      MenuOption(
+        label: "Gerenciamento",
+        icon: Icons.admin_panel_settings_outlined,
+        onTap: () {
+          Navigator.pushNamed(context, '/management');
+        },
+      ),
+      MenuOption(
+        label: "Sair",
+        icon: Icons.logout,
+        color: Colors.redAccent,
+        onTap: () async {
+          await FirebaseAuth.instance.signOut();
+          if (context.mounted) {
+            // Volta para a tela inicial
+            Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+          }
+        },
+      ),
+    ];
+  }
+
+  //OPÇÕES PARA VISITANTE
+  List<MenuOption> _buildVisitorOptions(BuildContext context) {
+    return [
+      MenuOption(
+        label: "Trocar Instituição",
+        icon: Icons.swap_horiz,
+        onTap: () {
+          Navigator.pushNamedAndRemoveUntil(context, '/select-instituition', (route) => false);
+        },
+      ),
+      MenuOption(
+        label: "Sair do App",
+        icon: Icons.exit_to_app,
+        color: Colors.redAccent,
+        onTap: () {
+           Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+        },
+      ),
+    ];
   }
 }
