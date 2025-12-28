@@ -110,7 +110,7 @@ class _ListDetailsSectorsState extends State<ListDetailsSectors> {
                                   return SectorCard(
                                     name: sector.name,
                                     phone: sector.phone ?? "",
-                                    description: sector.description,
+                                    description: (sector.description ?? "Sem descrição"),
                                     onEdit: () {
                                       // Futuro
                                     },

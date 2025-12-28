@@ -7,15 +7,14 @@ class UploadSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 16),
         decoration: BoxDecoration(
-          color: Color(0xFFECF5FF),
+          color: const Color(0xFFECF5FF), // Fundo azul claro
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Color(0xFF5046FA), width: 0.5),
+          border: Border.all(color: const Color(0xFF5046FA), width: 0.5), // Borda azul
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -44,7 +43,7 @@ class UploadSection extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             const Text(
-              'JPEG, PNG ou PDF até 15MB',
+              'JPEG ou PNG',
               textAlign: TextAlign.center,
               style: TextStyle(color: Color(0xFF7D7D7D), fontSize: 14),
             ),

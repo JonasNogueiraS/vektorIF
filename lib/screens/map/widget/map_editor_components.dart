@@ -2,14 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/core/themes/size_extensions.dart';
 import 'package:vektor_if/core/widgets/custom_back_button.dart';
-import 'package:vektor_if/screens/map/models/map_marker.dart';
-
+import 'package:vektor_if/models/sectors_model.dart';
+import 'package:vektor_if/core/widgets/menu_buttons.dart'; 
 
 //  HEADER 
 class MapEditorHeader extends StatelessWidget {
-  final VoidCallback onReset;
+  final VoidCallback onClearAllPins; // Callback para limpar apenas os pinos
+  final VoidCallback onDeleteMap;    // Callback para apagar o mapa inteiro
 
-  const MapEditorHeader({super.key, required this.onReset});
+  const MapEditorHeader({
+    super.key, 
+    required this.onClearAllPins,
+    required this.onDeleteMap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +27,7 @@ class MapEditorHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const CustomBackButtom(),
+          
           Text(
             "Mapear Setores",
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -30,17 +36,28 @@ class MapEditorHeader extends StatelessWidget {
                   color: const Color(0xff49454F),
                 ),
           ),
-          IconButton(
-            onPressed: onReset,
-            icon: const Icon(Icons.delete_forever_outlined, color: Colors.redAccent),
-            tooltip: "Limpar Mapa",
+
+          SettingsMenuButton(
+            options: [
+              MenuOption(
+                label: 'Limpar Marcações',
+                icon: Icons.cleaning_services_outlined,
+                color: AppTheme.primaryColor,
+                onTap: onClearAllPins,
+              ),
+              MenuOption(
+                label: 'Excluir Mapa',
+                icon: Icons.delete_forever_outlined,
+                color: Colors.redAccent,
+                onTap: onDeleteMap,
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 }
-
 //  BARRA DE FERRAMENTAS 
 class MapToolsBar extends StatelessWidget {
   final int selectedIndex;
@@ -93,7 +110,6 @@ class MapToolsBar extends StatelessWidget {
   }
 }
 
-//privado apenas para os botões da barra
 class _ToolButton extends StatelessWidget {
   final bool isActive;
   final IconData icon;
@@ -127,11 +143,7 @@ class _ToolButton extends StatelessWidget {
               const SizedBox(width: 6),
               Text(
                 label,
-                style: TextStyle(
-                  color: activeColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: activeColor, fontWeight: FontWeight.bold, fontSize: 14),
               ),
             ]
           ],
@@ -140,25 +152,26 @@ class _ToolButton extends StatelessWidget {
     );
   }
 }
-
-// PINO DO MAPA  ---
+// PINO DO MAPA
 class MapMarkerPin extends StatelessWidget {
-  final MapMarker marker;
+  final SectorModel sector;
   final bool isDeleteMode;
   final VoidCallback onTap;
 
   const MapMarkerPin({
     super.key,
-    required this.marker,
+    required this.sector,
     required this.isDeleteMode,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    if (sector.mapX == null || sector.mapY == null) return const SizedBox();
+
     return Positioned(
-      left: marker.position.dx - 20,
-      top: marker.position.dy - 40,
+      left: sector.mapX! - 30, 
+      top: sector.mapY! - 60,  
       child: GestureDetector(
         onTap: onTap,
         child: Column(
@@ -168,14 +181,18 @@ class MapMarkerPin extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: Colors.grey.shade300),
+                border: Border.all(color: isDeleteMode ? Colors.red.shade200 : Colors.grey.shade300),
                 boxShadow: [
                    BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 2)
                 ]
               ),
               child: Text(
-                marker.sectorName,
-                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                sector.name,
+                style: TextStyle(
+                  fontSize: 10, 
+                  fontWeight: FontWeight.bold,
+                  color: isDeleteMode ? Colors.red : Colors.black87
+                ),
               ),
             ),
             Icon(

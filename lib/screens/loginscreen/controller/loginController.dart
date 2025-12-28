@@ -1,4 +1,3 @@
-// ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/services/firebase_auth.dart';
 

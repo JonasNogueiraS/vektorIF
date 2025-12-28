@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/widgets/buttom_generic.dart';
 
-class MapFooterButtom extends StatelessWidget {
+class MapEditorFooter extends StatelessWidget {
   final VoidCallback? onSave;
   final bool isEnabled;
 
-  const MapFooterButtom({
+  const MapEditorFooter({
     super.key,
     required this.onSave,
     this.isEnabled = true,

@@ -1,13 +1,68 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/core/themes/size_extensions.dart';
 import 'package:vektor_if/core/widgets/background_image.dart';
 import 'package:vektor_if/core/widgets/buttom_generic.dart';
 import 'package:vektor_if/core/widgets/custom_back_button.dart';
+import 'package:vektor_if/core/widgets/success_feedback_dialog.dart';
+import 'package:vektor_if/models/data/map_repository.dart';
 import 'package:vektor_if/screens/map/widget/upload_section.dart';
 
-class UploadMapScreen extends StatelessWidget {
+//CONTROLLER LOCAL 
+class UploadMapController extends ChangeNotifier {
+  final _repository = MapRepository();
+  final _picker = ImagePicker();
+
+  File? selectedImage;
+  bool isLoading = false;
+
+  Future<void> pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      selectedImage = File(image.path);
+      notifyListeners();
+    }
+  }
+
+  // NOVO: Limpa a seleção
+  void clearSelection() {
+    selectedImage = null;
+    notifyListeners();
+  }
+
+  Future<void> saveMap({required VoidCallback onSuccess, required Function(String) onError}) async {
+    if (selectedImage == null) {
+      onError("Por favor, selecione uma imagem primeiro.");
+      return;
+    }
+
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      await _repository.uploadMapImage(selectedImage!);
+      onSuccess();
+    } catch (e) {
+      onError(e.toString());
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+}
+
+// --- TELA ---
+class UploadMapScreen extends StatefulWidget {
   const UploadMapScreen({super.key});
+
+  @override
+  State<UploadMapScreen> createState() => _UploadMapScreenState();
+}
+
+class _UploadMapScreenState extends State<UploadMapScreen> {
+  final _controller = UploadMapController();
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +82,6 @@ class UploadMapScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 10),
-
                     // HEADER
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -42,13 +96,7 @@ class UploadMapScreen extends StatelessWidget {
                                 color: const Color(0xff49454F),
                               ),
                         ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.menu,
-                            color: Color(0xff49454F),
-                          ),
-                        ),
+                        const SizedBox(width: 48), 
                       ],
                     ),
 
@@ -81,28 +129,107 @@ class UploadMapScreen extends StatelessWidget {
                               color: Colors.black87,
                             ),
                           ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            "Escolha um arquivo para enviar",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 14, color: Colors.grey),
+                          const SizedBox(height: 20),
+
+                          // --- ÁREA DE SELEÇÃO/PREVIEW ---
+                          ListenableBuilder(
+                            listenable: _controller,
+                            builder: (context, _) {
+                              // ESTADO 1: Nenhuma imagem selecionada (Mostra o botão azul grande)
+                              if (_controller.selectedImage == null) {
+                                return Column(
+                                  children: [
+                                     const Text(
+                                      "Escolha um arquivo para enviar",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                                    ),
+                                    const SizedBox(height: 20),
+                                    UploadSection(
+                                      onTap: () {
+                                        _controller.pickImage();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              } 
+                              
+                              // ESTADO 2: Imagem selecionada (Mostra preview com botão remover)
+                              else {
+                                return Stack(
+                                  alignment: Alignment.topRight,
+                                  children: [
+                                    // A Imagem (Miniatura)
+                                    Container(
+                                      height: 250, // Altura fixa para o preview
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(color: AppTheme.colorLogo.withValues(alpha: 0.3)),
+                                        image: DecorationImage(
+                                          image: FileImage(_controller.selectedImage!),
+                                          fit: BoxFit.cover, // Cobre a área (pode usar .contain se preferir ver inteira)
+                                        )
+                                      ),
+                                    ),
+                                    
+                                    // Botão de Remover (X vermelho)
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: InkWell(
+                                        onTap: () => _controller.clearSelection(),
+                                        child: CircleAvatar(
+                                          backgroundColor: Colors.red.withValues(alpha: 0.9),
+                                          radius: 18,
+                                          child: const Icon(Icons.close, color: Colors.white, size: 20),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }
+                            }
                           ),
+                          // --- FIM DA ÁREA DE SELEÇÃO ---
 
                           const SizedBox(height: 30),
 
-                          UploadSection(
-                            onTap: () {
-                              print("Lógica para abrir galeria");
-                            },
-                          ),
-
-                          const SizedBox(height: 30),
-
-                          ButtomGeneric(
-                            label: "Salvar",
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/map-editor');
-                            },
+                          // Botão Salvar
+                          ListenableBuilder(
+                            listenable: _controller,
+                            builder: (context, _) {
+                              return ButtomGeneric(
+                                label: "Salvar e Continuar",
+                                isLoading: _controller.isLoading,
+                                // Só habilita o botão se tiver imagem
+                                onPressed: _controller.selectedImage == null ? null : () {
+                                  _controller.saveMap(
+                                    onSuccess: () {
+                                       showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (context) => const SuccessFeedbackDialog(
+                                          title: "Mapa Enviado!",
+                                          subtitle: "Vamos agora marcar os setores.",
+                                        ),
+                                      );
+                                      
+                                      Future.delayed(const Duration(seconds: 2), () {
+                                        if (context.mounted) {
+                                          Navigator.pop(context);
+                                          Navigator.pushReplacementNamed(context, '/map-editor');
+                                        }
+                                      });
+                                    },
+                                    onError: (msg) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text(msg), backgroundColor: Colors.red),
+                                      );
+                                    }
+                                  );
+                                },
+                              );
+                            }
                           ),
                         ],
                       ),
