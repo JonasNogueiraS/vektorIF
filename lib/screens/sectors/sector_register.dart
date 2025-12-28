@@ -6,7 +6,7 @@ import 'package:vektor_if/core/widgets/forms_widgets.dart';
 import 'package:vektor_if/core/widgets/success_feedback_dialog.dart';
 import 'package:vektor_if/screens/sectors/controller/sector_register_controller.dart';
 import 'package:vektor_if/screens/sectors/widgets/buttons_sectors.dart';
-import 'package:vektor_if/screens/sectors/widgets/sector_form_components.dart';
+import 'package:vektor_if/core/widgets/sector_form_components.dart';
 
 class SectorRegisterScreen extends StatefulWidget {
   const SectorRegisterScreen({super.key});
@@ -91,7 +91,7 @@ class _SectorRegisterScreenState extends State<SectorRegisterScreen> {
                   SizedBox(height: context.percentHeight(0.03)),
 
                   CircularImagePicker(
-                    label: "Adicione uma foto da instituição",
+                    label: "Adicione uma foto \ndo setor",
                     onTap: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text("Em breve!")),

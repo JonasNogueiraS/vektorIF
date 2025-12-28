@@ -5,6 +5,7 @@ class ColaboratorsCards extends StatelessWidget {
   final String name;
   final String email;
   final String sector;
+  final bool isBoss;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
@@ -13,6 +14,7 @@ class ColaboratorsCards extends StatelessWidget {
     required this.name,
     required this.email,
     required this.sector,
+    this.isBoss = false,
     required this.onEdit,
     required this.onDelete,
   });
@@ -20,84 +22,96 @@ class ColaboratorsCards extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+      color: AppTheme.colorWhiteText, 
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        
+        //AVATAR
+        leading: CircleAvatar(
+          backgroundColor: AppTheme.colorLogo.withValues(alpha: 0.1),
+          radius: 24,
+          child: const Icon(
+            Icons.person, 
+            color: AppTheme.colorLogo,
+            size: 24,
           ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // Avatar
-          CircleAvatar(
-            radius: 28,
-            backgroundColor: Colors.grey.shade300,
-            child: const Icon(Icons.person, size: 30, color: Colors.white),
-          ),
-          const SizedBox(width: 12),
-          
-          // Infos
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Color(0xff49454F),
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  email,
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: AppTheme.colorLogo.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    sector,
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.colorLogo,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+        ),
 
-          // Ações
-          Column(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.edit_outlined, color: Colors.blueGrey),
-                visualDensity: VisualDensity.compact,
-                onPressed: onEdit,
+        //TÍTULO 
+        title: Row(
+          children: [
+            Flexible(
+              child: Text(
+                name,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: AppTheme.colorBlackText,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
-              IconButton(
-                icon: Icon(Icons.delete_outline, color: Colors.red.shade300),
-                visualDensity: VisualDensity.compact,
-                onPressed: onDelete,
+            ),
+            
+            // Badge de Chefe
+            if (isBoss) ...[
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppTheme.colorLogo.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  "CHEFE",
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.colorLogo,
+                  ),
+                ),
+              )
+            ]
+          ],
+        ),
+
+        //SUBTÍTULO
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              sector,
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Colors.black87,
               ),
-            ],
-          )
-        ],
+            ),
+            Text(
+              email,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[500],
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+
+        // 4. AÇÕES
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [   
+            IconButton(
+              icon: const Icon(Icons.edit, size: 20, color: Colors.blueGrey),
+              onPressed: onEdit,
+              tooltip: "Editar",
+            ),        
+            IconButton(
+              icon: const Icon(Icons.delete_outline, size: 20, color: Colors.redAccent),
+              onPressed: onDelete,
+              tooltip: "Remover",
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -47,7 +47,6 @@ class _ManagementScreenState extends State<ManagementScreen> {
               _controller.nameController.text.isEmpty) {
             return const Center(child: CircularProgressIndicator());
           }
-
           return Stack(
             children: [
               const BackgroundImage(),
@@ -200,7 +199,6 @@ class _ManagementScreenState extends State<ManagementScreen> {
                           );
                         },
                       ),
-
                       const SizedBox(height: 40),
                     ],
                   ),

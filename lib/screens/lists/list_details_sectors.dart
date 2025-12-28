@@ -3,11 +3,11 @@ import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/core/themes/size_extensions.dart';
 import 'package:vektor_if/core/widgets/background_image.dart';
 import 'package:vektor_if/core/widgets/buttom_generic.dart';
+import 'package:vektor_if/core/widgets/custom_back_button.dart';
 import 'package:vektor_if/models/sectors_model.dart';
 import 'package:vektor_if/models/data/sectors_repository.dart';
 import 'package:vektor_if/screens/lists/widgets/search_colaborators.dart';
-import 'widgets/sector_card.dart';
-
+import 'package:vektor_if/screens/lists/widgets/sector_card.dart'; 
 class ListDetailsSectors extends StatefulWidget {
   const ListDetailsSectors({super.key});
 
@@ -16,7 +16,7 @@ class ListDetailsSectors extends StatefulWidget {
 }
 
 class _ListDetailsSectorsState extends State<ListDetailsSectors> {
-  final _repository = SectorsRepository(); // Instancia o Repo
+  final _repository = SectorsRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -40,64 +40,92 @@ class _ListDetailsSectorsState extends State<ListDetailsSectors> {
                   SizedBox(height: context.percentHeight(0.03)),
 
                   SearchList(
-                    onSearchChanged: (value) {
-                      //Implementar filtro local
-                    },
+                    onSearchChanged: (value) {},
                     onFilterTap: () {},
                   ),
 
                   SizedBox(height: context.percentHeight(0.02)),
 
-                  // LISTA DINÂMICA
+                  // --- LISTA PADRONIZADA ---
                   Expanded(
-                    child: StreamBuilder<List<SectorModel>>(
-                      stream: _repository.getSectorsStream(),
-                      builder: (context, snapshot) {
-                        //Carregando
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                        if (snapshot.hasError) {
-                          return const Center(
-                            child: Text("Erro ao carregar dados."),
-                          );
-                        }
-                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                          return const Center(
-                            child: Text(
-                              "Nenhum setor cadastrado.",
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                          );
-                        }
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: SingleChildScrollView(
+                        physics:
+                            const ClampingScrollPhysics(), 
+                        child: StreamBuilder<List<SectorModel>>(
+                          stream: _repository.getSectorsStream(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
 
-                        final sectors = snapshot.data!;
+                            if (snapshot.hasError) {
+                              return const Center(
+                                child: Text("Erro ao carregar dados."),
+                              );
+                            }
 
-                        return ListView.separated(
-                          itemCount: sectors.length,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(height: 12),
-                          itemBuilder: (context, index) {
-                            final sector = sectors[index];
-                            return SectorCard(
-                              name: sector.name,
-                              phone: sector.phone ?? "Sem telefone",
-                              description: sector.description,
-                              onEdit: () {
-                                // Navegar para edição
-                              },
-                              onDelete: () {
-                                if (sector.id != null) {
-                                  _repository.deleteSector(sector.id!);
-                                }
-                              },
+                            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                              return const Center(
+                                child: Text(
+                                  "Nenhum setor cadastrado.",
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              );
+                            }
+
+                            final sectors = snapshot.data!;
+
+                            return Container(
+                              clipBehavior: Clip.hardEdge,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.05),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: ListView.separated(
+                                padding: EdgeInsets.zero,
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: sectors.length,
+                                separatorBuilder: (_, __) => const Divider(
+                                  height: 2.5,
+                                  thickness: 0.5,
+                                  indent: 10, 
+                                  endIndent: 16,
+                                  color: AppTheme.primaryBlue,
+                                ),
+                                itemBuilder: (context, index) {
+                                  final sector = sectors[index];
+                                  return SectorCard(
+                                    name: sector.name,
+                                    phone: sector.phone ?? "",
+                                    description: sector.description,
+                                    onEdit: () {
+                                      // Futuro
+                                    },
+                                    onDelete: () {
+                                      if (sector.id != null) {
+                                        _repository.deleteSector(sector.id!);
+                                      }
+                                    },
+                                  );
+                                },
+                              ),
                             );
                           },
-                        );
-                      },
+                        ),
+                      ),
                     ),
                   ),
 
@@ -121,14 +149,19 @@ class _ListDetailsSectorsState extends State<ListDetailsSectors> {
 
   Widget _buildHeader(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        const CustomBackButtom(),
         Text(
           "Setores",
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
             fontSize: 22,
             fontWeight: FontWeight.bold,
           ),
+        ),
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(Icons.menu, color: Color(0xff49454F)),
         ),
       ],
     );
