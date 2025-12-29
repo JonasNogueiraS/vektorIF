@@ -1,38 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:vektor_if/models/sectors_model.dart';
 import 'package:vektor_if/models/data/sectors_repository.dart';
 
 class SectorModal extends StatelessWidget {
-  // SectorModel
   final Function(SectorModel) onSectorSelected;
-  // Instância do repositório
   final _repository = SectorsRepository();
 
   SectorModal({super.key, required this.onSectorSelected});
 
   @override
   Widget build(BuildContext context) {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Indicador visual de "arrastar"
+          Container(
+            width: 40,
+            height: 4,
+            margin: const EdgeInsets.only(bottom: 20),
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          
           Text(
             "Selecione o Setor",
-            style: Theme.of(context).textTheme.titleLarge,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
           ),
           const SizedBox(height: 10),
           
           Flexible(
-            child: StreamBuilder<List<SectorModel>>(
-              stream: _repository.getSectorsStream(),
+            child: userId == null 
+            ? const Center(child: Text("Erro: Usuário não logado"))
+            : StreamBuilder<List<SectorModel>>(
+              stream: _repository.getSectorsStream(userId),
               builder: (context, snapshot) {
-                // Carregando
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
                 
-                //Erro ou Vazio
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return const Center(
                     child: Padding(
@@ -42,27 +57,30 @@ class SectorModal extends StatelessWidget {
                   );
                 }
 
-                final sectors = snapshot.data!;
+                final allSectors = snapshot.data!;
+                // Se o setor aparecer 5 vezes (5 pinos), pegamos apenas o primeiro para exibir na lista.
+                final uniqueSectorsMap = {
+                  for (var sector in allSectors) sector.id: sector
+                };
+                final uniqueSectorsList = uniqueSectorsMap.values.toList();
+                // -------------------------------------
 
                 return ListView.separated(
                   shrinkWrap: true,
-                  itemCount: sectors.length,
+                  itemCount: uniqueSectorsList.length,
                   separatorBuilder: (_, __) => const Divider(height: 1),
                   itemBuilder: (_, index) {
-                    final sector = sectors[index];
-                    
-                    // Verifica se já foi mapeado (tem X e Y)
-                    final isMapped = sector.mapX != null; 
+                    final sector = uniqueSectorsList[index];
+                    // Contagem de quantas vezes esse setor já foi marcado (Opcional, mas útil)
+                    final count = allSectors.where((s) => s.id == sector.id && s.mapX != null).length;
 
                     return ListTile(
                       title: Text(sector.name),
-                      // Mostra um aviso se já estiver no mapa
-                      subtitle: isMapped 
-                          ? const Text("Já posicionado no mapa", style: TextStyle(fontSize: 10, color: Colors.green)) 
-                          : null,
-                      trailing: const Icon(Icons.chevron_right),
+                      subtitle: count > 0 
+                          ? Text("$count marcação(ões) no mapa", style: const TextStyle(fontSize: 12, color: Colors.green)) 
+                          : const Text("Toque para adicionar", style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      trailing: const Icon(Icons.add_location_alt_outlined, color: Colors.blue),
                       onTap: () {
-                        // Retorna o OBJETO SectorModel inteiro
                         onSectorSelected(sector);
                         Navigator.pop(context);
                       },

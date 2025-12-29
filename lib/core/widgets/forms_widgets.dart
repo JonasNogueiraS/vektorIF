@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
-import 'package:vektor_if/core/themes/size_extensions.dart';
 
-// 1. LABEL PADRÃO
+//LABEL PADRÃO
 class FormLabel extends StatelessWidget {
   final String text;
   final EdgeInsetsGeometry? padding;
@@ -95,43 +94,8 @@ class GenericInputField extends StatelessWidget {
   }
 }
 
-// 3. UPLOAD DE IMAGEM (Para Setores/Colaboradores)
-class RectangularImagePicker extends StatelessWidget {
-  final VoidCallback? onTap;
 
-  const RectangularImagePicker({super.key, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Center(
-        child: Container(
-          height: context.percentHeight(0.18),
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.grey.shade300, width: 1),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.add_a_photo_outlined, size: 40, color: Colors.grey[600]),
-              const SizedBox(height: 8),
-              Text(
-                "Toque para adicionar uma foto",
-                style: TextStyle(color: Colors.grey[600], fontSize: 12),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// 4. UPLOAD DE IMAGEM CIRCULAR/ROW (Para Usuário/Instituição)
+// UPLOAD DE IMAGEM CIRCULAR
 class CircularImagePicker extends StatelessWidget {
   final String label;
   final VoidCallback? onTap;

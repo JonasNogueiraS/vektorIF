@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/core/themes/size_extensions.dart';
@@ -8,6 +9,7 @@ import 'package:vektor_if/models/sectors_model.dart';
 import 'package:vektor_if/models/data/sectors_repository.dart';
 import 'package:vektor_if/screens/lists/widgets/search_colaborators.dart';
 import 'package:vektor_if/screens/lists/widgets/sector_card.dart'; 
+
 class ListDetailsSectors extends StatefulWidget {
   const ListDetailsSectors({super.key});
 
@@ -46,18 +48,16 @@ class _ListDetailsSectorsState extends State<ListDetailsSectors> {
 
                   SizedBox(height: context.percentHeight(0.02)),
 
-                  // --- LISTA PADRONIZADA ---
+                  //LISTA
                   Expanded(
                     child: Align(
                       alignment: Alignment.topCenter,
                       child: SingleChildScrollView(
-                        physics:
-                            const ClampingScrollPhysics(), 
+                        physics: const ClampingScrollPhysics(), 
                         child: StreamBuilder<List<SectorModel>>(
-                          stream: _repository.getSectorsStream(),
+                          stream: _repository.getSectorsStream(FirebaseAuth.instance.currentUser!.uid),
                           builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
                               return const Center(
                                 child: CircularProgressIndicator(),
                               );
@@ -78,7 +78,13 @@ class _ListDetailsSectorsState extends State<ListDetailsSectors> {
                               );
                             }
 
-                            final sectors = snapshot.data!;
+                            final allSectors = snapshot.data!;
+                           //elimina duplicatas automaticamente.
+                            final uniqueSectorsMap = {
+                              for (var sector in allSectors) sector.id: sector
+                            };
+                            // Converte de volta para lista para usar no ListView
+                            final uniqueList = uniqueSectorsMap.values.toList();
 
                             return Container(
                               clipBehavior: Clip.hardEdge,
@@ -97,7 +103,7 @@ class _ListDetailsSectorsState extends State<ListDetailsSectors> {
                                 padding: EdgeInsets.zero,
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                itemCount: sectors.length,
+                                itemCount: uniqueList.length, //lista filtrada
                                 separatorBuilder: (_, __) => const Divider(
                                   height: 2.5,
                                   thickness: 0.5,
@@ -106,7 +112,7 @@ class _ListDetailsSectorsState extends State<ListDetailsSectors> {
                                   color: AppTheme.primaryBlue,
                                 ),
                                 itemBuilder: (context, index) {
-                                  final sector = sectors[index];
+                                  final sector = uniqueList[index]; //item filtrado
                                   return SectorCard(
                                     name: sector.name,
                                     phone: sector.phone ?? "",

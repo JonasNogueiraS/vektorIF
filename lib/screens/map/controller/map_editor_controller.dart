@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Import necessário
 import 'package:vektor_if/models/data/map_repository.dart';
 import 'package:vektor_if/models/data/sectors_repository.dart';
 import 'package:vektor_if/models/sectors_model.dart';
@@ -16,12 +17,18 @@ class MapEditorController extends ChangeNotifier {
     notifyListeners();
     try {
       backendMapUrl = await _mapRepo.getCurrentMapUrl();
-      final allSectors = await _sectorsRepo.getSectorsStream().first;
       
-      // Filtra apenas os que têm coordenadas para mostrar no mapa
-      mappedSectors = allSectors
-          .where((s) => s.mapX != null && s.mapY != null)
-          .toList();
+      // CORREÇÃO: Pega o ID do usuário logado
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      
+      if (userId != null) {
+        // CORREÇÃO: Passa o ID para o método
+        final allSectors = await _sectorsRepo.getSectorsStream(userId).first;
+        
+        mappedSectors = allSectors
+            .where((s) => s.mapX != null && s.mapY != null)
+            .toList();
+      }
           
     } catch (e) {
       debugPrint("Erro ao carregar: $e");
@@ -31,14 +38,15 @@ class MapEditorController extends ChangeNotifier {
     }
   }
 
-  // múltiplos pinos do mesmo setor
+  // ... (o restante dos métodos addSector, removeSector, saveMap continuam iguais)
+  // Certifique-se apenas que os métodos que chamam repositório de escrita (save) 
+  // não precisam de ID pois o repositório pega internamente o _userId.
+  
   void addSector(Offset position, SectorModel originalSector) {
-    // Cria um NOVO pino visual para esse setor
     final newPin = originalSector.copyWith(
       mapX: position.dx,
       mapY: position.dy,
     );
-    
     mappedSectors.add(newPin);
     notifyListeners();
   }
@@ -52,9 +60,7 @@ class MapEditorController extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
     try {
-      // Pega IDs únicos para não chamar o banco repetidamente
       final uniqueIds = mappedSectors.map((s) => s.id!).toSet();
-      
       await Future.wait(
         uniqueIds.map((id) => _sectorsRepo.removeSectorCoordinates(id))
       );
@@ -84,12 +90,10 @@ class MapEditorController extends ChangeNotifier {
     }
   }
 
-  //Agrupa os pinos por Setor ID e salva listas de coordenadas
   Future<void> saveMap({required VoidCallback onSuccess, required Function(String) onError}) async {
     isLoading = true;
     notifyListeners();
     try {
-      // Agrupa os pinos pelo ID do setor
       final Map<String, List<Map<String, double>>> groupedCoords = {};
 
       for (var sector in mappedSectors) {
@@ -105,7 +109,6 @@ class MapEditorController extends ChangeNotifier {
         });
       }
 
-      // 2. Salva cada grupo no banco
       for (var entry in groupedCoords.entries) {
         await _sectorsRepo.saveSectorCoordinates(entry.key, entry.value);
       }

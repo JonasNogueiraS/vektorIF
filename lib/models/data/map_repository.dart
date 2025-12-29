@@ -10,64 +10,64 @@ class MapRepository {
 
   String? get _userId => _auth.currentUser?.uid;
 
-  // Envia a imagem para o Storage e salva a URL no Firestore
-  Future<String> uploadMapImage(File imageFile) async {
-    if (_userId == null) throw Exception("Usuário não logado");
+  // --- MÉTODOS DE LEITURA ---
 
+  // 1. CORREÇÃO DO ERRO: Método que aceita ID externo (para visitantes)
+  Future<String?> getMapUrl(String institutionId) async {
     try {
-      // Cria referência: institutions/{uid}/map_image.jpg
-      final ref = _storage.ref().child('institutions/$_userId/map_image.jpg');
-
-      // Upload
-      await ref.putFile(imageFile);
-
-      // Pega URL
-      final imageUrl = await ref.getDownloadURL();
-
-      // Atualiza documento da instituição
-      await _firestore.collection('institutions').doc(_userId).update({
-        'mapImageUrl': imageUrl,
-      });
-
-      return imageUrl;
+      final doc = await _firestore.collection('institutions').doc(institutionId).get();
+      
+      // Verifica se o documento existe e tem a URL da imagem
+      if (doc.exists && doc.data() != null && doc.data()!.containsKey('mapImageUrl')) {
+        return doc.data()!['mapImageUrl'] as String;
+      }
+      return null;
     } catch (e) {
-      throw Exception("Erro ao enviar imagem: $e");
+      return null;
     }
   }
 
-  // Busca a URL atual do mapa
+  // 2. Método para o Editor (Usa o ID do usuário logado)
   Future<String?> getCurrentMapUrl() async {
     if (_userId == null) return null;
+    return getMapUrl(_userId!); // Reutiliza a lógica acima
+  }
+
+  // --- MÉTODOS DE ESCRITA (Somente Logado) ---
+
+  Future<void> uploadMapImage(File imageFile) async {
+    if (_userId == null) return;
+
     try {
-      final doc = await _firestore
-          .collection('institutions')
-          .doc(_userId)
-          .get();
-      if (doc.exists && doc.data() != null) {
-        return doc.data()!['mapImageUrl'] as String?;
-      }
+      // Salva no Storage
+      final ref = _storage.ref().child('institutions/$_userId/map_image.jpg');
+      await ref.putFile(imageFile);
+      final url = await ref.getDownloadURL();
+
+      // Salva link no Firestore
+      await _firestore.collection('institutions').doc(_userId).update({
+        'mapImageUrl': url,
+      });
     } catch (e) {
-      print("Erro ao buscar mapa: $e");
+      throw Exception('Erro ao fazer upload: $e');
     }
-    return null;
   }
 
   Future<void> deleteMapImage() async {
     if (_userId == null) return;
 
     try {
-      // 1. Remove do Firestore (limpa o campo mapImageUrl)
+      // Remove link do Firestore
       await _firestore.collection('institutions').doc(_userId).update({
-        'mapImageUrl': FieldValue.delete(), // Remove o campo do documento
+        'mapImageUrl': FieldValue.delete(),
       });
 
-      // 2. Opcional: Remover o arquivo físico do Storage para economizar espaço
-      // (Pode falhar se o arquivo não existir, então usamos try/catch silencioso ou verificamos)
+      // Tenta remover arquivo do Storage
       try {
         final ref = _storage.ref().child('institutions/$_userId/map_image.jpg');
         await ref.delete();
       } catch (_) {
-        // Ignora erro se o arquivo já não existia no storage
+        // Ignora se o arquivo já não existir
       }
     } catch (e) {
       throw Exception("Erro ao remover mapa: $e");

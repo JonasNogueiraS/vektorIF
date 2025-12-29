@@ -6,7 +6,8 @@ class ButtomGeneric extends StatelessWidget {
   final VoidCallback? onPressed;
   final Color backgroundColor;
   final Color textColor;
-  final bool isLoading; // mostra loading se precisar
+  final bool isLoading;
+  final bool isOutlined; 
 
   const ButtomGeneric({
     super.key,
@@ -15,39 +16,63 @@ class ButtomGeneric extends StatelessWidget {
     this.backgroundColor = AppTheme.colorButtons, 
     this.textColor = AppTheme.colorWhiteText, 
     this.isLoading = false,
+    this.isOutlined = false, // Padrão
   });
 
   @override
   Widget build(BuildContext context) {
+    
+    final effectiveTextColor = isOutlined ? backgroundColor : textColor;
+
     return SizedBox(
-      width: double.infinity, // Ocupa toda a largura disponível 
-      child: ElevatedButton(
-        onPressed: isLoading ? null : onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          elevation: 0, // remove a sombra 
-        ),
-        child: isLoading
-            ? SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: textColor,
-                ),
-              )
-            : Text(
-                label,
-                style: TextStyle(
-                  color: textColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+      width: double.infinity,
+      height: 50, 
+      child: isOutlined
+          // -Outlined
+          ? OutlinedButton(
+              onPressed: isLoading ? null : onPressed,
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: backgroundColor, width: 1.5),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),  
                 ),
               ),
+              child: _buildContent(effectiveTextColor),
+            )
+          // --- ESTILO PREENCHIDO (Elevated) ---
+          : ElevatedButton(
+              onPressed: isLoading ? null : onPressed,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: backgroundColor,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15), 
+                ),
+              ),
+              child: _buildContent(effectiveTextColor),
+            ),
+    );
+  }
+
+  
+  Widget _buildContent(Color color) {
+    if (isLoading) {
+      return SizedBox(
+        height: 20,
+        width: 20,
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          color: color,
+        ),
+      );
+    }
+    return Text(
+      label.toUpperCase(), // O seu exemplo usava caixa alta
+      style: TextStyle(
+        color: color,
+        fontWeight: FontWeight.bold,
+        fontSize: 14,
+        letterSpacing: 0.5, // Espaçamento igual ao do seu exemplo
       ),
     );
   }

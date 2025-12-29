@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
+import 'package:vektor_if/core/widgets/buttom_generic.dart';
 import 'package:vektor_if/screens/primary/widgets/header_log.dart';
 
 class EnterApp extends StatelessWidget {
@@ -14,14 +16,13 @@ class EnterApp extends StatelessWidget {
         children: [
           // Header Fixo
           const CustomHeader(),
-          // Ocupa o espaço restante da tela
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Spacer(flex: 2), // Empurra para baixo (peso 2)
+                  const Spacer(flex: 2), 
 
                   Text(
                     "ENTRE E ESCOLHA UMA INSTITUIÇÃO",
@@ -34,8 +35,8 @@ class EnterApp extends StatelessWidget {
 
                   const Spacer(
                     flex: 1,
-                  ), // Espaço flexível entre título e botões
-                  // Botão Azul
+                  ), 
+
                   SizedBox(
                     height: 50,
                     child: ElevatedButton(
@@ -75,38 +76,30 @@ class EnterApp extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  // Botão Outline
-                  SizedBox(
-                    height: 50,
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pushNamed(context, '/login'),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(
-                          color: AppTheme.colorButtons,
-                          width: 1.5,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                      ),
-                      child: const Text(
-                        "ENTRAR GERENCIAMENTO",
-                        style: TextStyle(
-                          color: AppTheme.colorButtons,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ),
+                  ButtomGeneric(
+                    label: "ENTRAR GERENCIAMENTO",
+                    isOutlined: true,
+                    backgroundColor: AppTheme.colorButtons,
+                    onPressed: () {
+                      final user = FirebaseAuth.instance.currentUser;
+
+                      if (user != null) {
+                        
+                        Navigator.pushNamed(context, '/management');
+                      } else {
+                       
+                        Navigator.pushNamed(context, '/login');
+                      }
+                    },
                   ),
 
-                  const Spacer(flex: 3), // Empurra muito para cima (peso 3)
+                  const Spacer(flex: 3), 
 
                   const Divider(color: AppTheme.colorGrayText),
 
                   const SizedBox(
                     height: 20,
-                  ), // Espaço pequeno fixo antes do link
+                  ), 
                 ],
               ),
             ),

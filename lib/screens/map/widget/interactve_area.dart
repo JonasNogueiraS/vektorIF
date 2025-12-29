@@ -1,6 +1,8 @@
+import 'dart:async';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:vektor_if/models/sectors_model.dart';
-import 'package:vektor_if/screens/map/widget/map_editor_components.dart';
+import 'package:vektor_if/screens/map/widget/map_widgets.dart'; 
 
 class InteractiveArea extends StatefulWidget {
   final TransformationController transformationController;
@@ -30,6 +32,9 @@ class _InteractiveAreaState extends State<InteractiveArea> with SingleTickerProv
   late AnimationController _animationController;
   Animation<Matrix4>? _animation;
   TapDownDetails? _doubleTapDetails;
+  
+  double? _imageAspectRatio;
+  bool _isLoadingImage = false;
 
   @override
   void initState() {
@@ -40,14 +45,48 @@ class _InteractiveAreaState extends State<InteractiveArea> with SingleTickerProv
     )..addListener(() {
         widget.transformationController.value = _animation!.value;
       });
+
+    if (widget.mapUrl != null) {
+      _loadImageDimensions(widget.mapUrl!);
+    }
   }
 
   @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
+  void didUpdateWidget(covariant InteractiveArea oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.mapUrl != oldWidget.mapUrl && widget.mapUrl != null) {
+      _loadImageDimensions(widget.mapUrl!);
+    }
   }
 
+  // Carrega tamanho real da imagem para calcular AspectRatio
+  Future<void> _loadImageDimensions(String url) async {
+    setState(() => _isLoadingImage = true);
+    try {
+      final ImageStream stream = NetworkImage(url).resolve(ImageConfiguration.empty);
+      final Completer<ui.Image> completer = Completer();
+      
+      late ImageStreamListener listener;
+      listener = ImageStreamListener((ImageInfo frame, bool synchronousCall) {
+        stream.removeListener(listener);
+        completer.complete(frame.image);
+      });
+      
+      stream.addListener(listener);
+      final ui.Image image = await completer.future;
+      
+      if (mounted) {
+        setState(() {
+          _imageAspectRatio = image.width / image.height;
+          _isLoadingImage = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoadingImage = false);
+    }
+  }
+
+  // Lógica de Zoom no Duplo Clique
   void _handleDoubleTap() {
     final Matrix4 currentMatrix = widget.transformationController.value;
     final double currentScale = currentMatrix.getMaxScaleOnAxis();
@@ -78,69 +117,19 @@ class _InteractiveAreaState extends State<InteractiveArea> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
-    // 1. Decidimos O QUE mostrar antes de montar a árvore
-    Widget content;
-
-    if (widget.mapUrl != null) {
-      // --- CENÁRIO A: TEM MAPA (Interativo) ---
-      content = InteractiveViewer(
-        transformationController: widget.transformationController,
-        minScale: 1.0,
-        maxScale: 5.0,
-        panEnabled: true,
-        boundaryMargin: EdgeInsets.zero,
-        constrained: true,
-        child: GestureDetector(
-          onDoubleTapDown: (details) => _doubleTapDetails = details,
-          onDoubleTap: _handleDoubleTap,
-          onTapUp: widget.onMapTap, // Só permite adicionar pino AQUI
-          child: Stack(
-            alignment: Alignment.center,
-            fit: StackFit.expand,
-            children: [
-              // Imagem do Mapa
-              Image.network(
-                widget.mapUrl!,
-                fit: BoxFit.contain,
-                loadingBuilder: (ctx, child, progress) {
-                  if (progress == null) return child;
-                  return const Center(child: CircularProgressIndicator());
-                },
-                errorBuilder: (ctx, _, __) => const Center(child: Icon(Icons.broken_image)),
-              ),
-
-              // Pinos (Só aparecem se tiver mapa)
-              ...widget.mappedSectors.map(
-                (sector) => MapMarkerPin(
-                  sector: sector,
-                  isDeleteMode: widget.isDeleteMode,
-                  onTap: () => widget.onSectorTap(sector),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    } else {
-      // --- CENÁRIO B: NÃO TEM MAPA (Estático) ---
-      // Aqui removemos InteractiveViewer e GestureDetector
-      content = const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.image_not_supported_outlined, size: 50, color: Colors.grey),
-            SizedBox(height: 10),
-            Text("Nenhum mapa enviado", style: TextStyle(color: Colors.grey)),
-          ],
-        ),
-      );
+    //Placeholder (Sem Mapa)
+    if (widget.mapUrl == null) {
+      return const MapPlaceholder(message: "Nenhum mapa enviado");
     }
 
-    //Estrutura do Container
+    //Loading Inicial
+    if (_isLoadingImage || _imageAspectRatio == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    // 3. Área Interativa
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      width: double.infinity,
-      height: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -157,11 +146,67 @@ class _InteractiveAreaState extends State<InteractiveArea> with SingleTickerProv
         borderRadius: BorderRadius.circular(16),
         child: Stack(
           children: [
-            // O conteúdo (Interativo ou Estático) ocupa tudo
-            Positioned.fill(child: content),
+            InteractiveViewer(
+              transformationController: widget.transformationController,
+              minScale: 1.0,
+              maxScale: 5.0,
+              panEnabled: true,
+              boundaryMargin: EdgeInsets.zero,
+              constrained: true,
+              child: Center(
+                // Mantém a proporção da imagem 
+                child: AspectRatio(
+                  aspectRatio: _imageAspectRatio!,
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return GestureDetector(
+                        onDoubleTapDown: (details) => _doubleTapDetails = details,
+                        onDoubleTap: _handleDoubleTap,
+                        onTapUp: (details) {
+                          // Normaliza o clique (converte pixel para 0.0 - 1.0)
+                          final normalizedX = details.localPosition.dx / constraints.maxWidth;
+                          final normalizedY = details.localPosition.dy / constraints.maxHeight;
+                          
+                          final normalizedDetails = TapUpDetails(
+                            kind: details.kind,
+                            globalPosition: details.globalPosition,
+                            localPosition: Offset(normalizedX, normalizedY),
+                          );
+                          
+                          widget.onMapTap(normalizedDetails);
+                        },
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Image.network(
+                              widget.mapUrl!,
+                              fit: BoxFit.cover,
+                              loadingBuilder: (ctx, child, progress) {
+                                if (progress == null) return child;
+                                return const Center(child: CircularProgressIndicator());
+                              },
+                              errorBuilder: (ctx, _, __) => const Center(child: Icon(Icons.broken_image)),
+                            ),
+
+                            ...widget.mappedSectors.map((sector) {
+                              return ResponsivePin(
+                                sector: sector,
+                                constraints: constraints,
+                                isDeleteMode: widget.isDeleteMode,
+                                onTap: () => widget.onSectorTap(sector),
+                              );
+                            }),
+                          ],
+                        ),
+                      );
+                    }
+                  ),
+                ),
+              ),
+            ),
             
-            // Botão de Remover 
-            if (widget.mapUrl != null)
+            // Botão de Remover
+            if (widget.mapUrl != null && widget.onRemoveMap != null)
               Positioned(
                 top: 10,
                 right: 10,
@@ -180,5 +225,11 @@ class _InteractiveAreaState extends State<InteractiveArea> with SingleTickerProv
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 }

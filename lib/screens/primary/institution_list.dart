@@ -3,17 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/models/institution_model.dart';
 import 'package:vektor_if/models/data/insitution_repository.dart';
-import 'package:vektor_if/screens/menagement/widget/institution_cards.dart'; 
+import 'package:vektor_if/screens/menagement/widget/institution_cards.dart';
 import 'package:vektor_if/screens/primary/widgets/header_log.dart';
 
 class SelectInstitutionScreen extends StatefulWidget {
   const SelectInstitutionScreen({super.key});
 
   @override
-  State<SelectInstitutionScreen> createState() => _SelectInstitutionScreenState();
+  State<SelectInstitutionScreen> createState() =>
+      _SelectInstitutionScreenState();
 }
+
 class _SelectInstitutionScreenState extends State<SelectInstitutionScreen> {
-  final _repository = InstitutionRepository(); 
+  final _repository = InstitutionRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -32,17 +34,22 @@ class _SelectInstitutionScreenState extends State<SelectInstitutionScreen> {
                   const SizedBox(height: 24),
                   Text(
                     "SELECIONE UMA INSTITUIÇÃO",
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: 16),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.headlineSmall?.copyWith(fontSize: 16),
                   ),
                   const SizedBox(height: 5),
 
-                  //LISTA DINÂMICA 
+                  //LISTA DINÂMICA
                   Expanded(
                     child: StreamBuilder<List<InstitutionModel>>(
                       stream: _repository.getAllInstitutions(),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
                         }
 
                         if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -59,18 +66,29 @@ class _SelectInstitutionScreenState extends State<SelectInstitutionScreen> {
                         return ListView.separated(
                           padding: EdgeInsets.zero,
                           itemCount: institutions.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: 12),
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(height: 12),
                           itemBuilder: (context, index) {
                             final item = institutions[index];
 
                             return GestureDetector(
                               onTap: () {
-                                Navigator.pushNamed(context, '/home-map');
+                                // AQUI É A MUDANÇA: Passamos os argumentos
+                                Navigator.pushNamed(
+                                  context,
+                                  '/home-map',
+                                  arguments: {
+                                    'institutionId':
+                                        item.id, // O ID para buscar os dados
+                                    'institutionName': item
+                                        .name, // O Nome para mostrar no Header
+                                  },
+                                );
                               },
                               child: InstitutionCard(
                                 name: item.name,
                                 address: item.address,
-                                // imagePath: item.photoUrl,
+                                imagePath: item.photoUrl,
                               ),
                             );
                           },
@@ -79,7 +97,7 @@ class _SelectInstitutionScreenState extends State<SelectInstitutionScreen> {
                     ),
                   ),
                   SafeArea(
-                    top: false, 
+                    top: false,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 24),
                       child: Center(

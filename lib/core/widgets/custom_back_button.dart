@@ -20,9 +20,6 @@ class CustomBackButtom extends StatelessWidget {
         onPressed: () {
             Navigator.pop(context);
         },
-        // onTap ?? () {
-        //   Navigator.pop(context);
-        // },
         padding: EdgeInsets.zero,
         constraints: const BoxConstraints(),
       ),
