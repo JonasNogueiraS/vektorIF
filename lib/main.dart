@@ -1,7 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/firebase_options.dart';
+import 'package:vektor_if/providers/auth_provider.dart';
+// Telas
 import 'package:vektor_if/screens/collaborators/collaborators_register.dart';
 import 'package:vektor_if/screens/lists/list_details_colaborators.dart';
 import 'package:vektor_if/screens/lists/list_details_sectors.dart';
@@ -20,7 +23,16 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const VektorApp());
+
+  runApp(
+    MultiProvider(
+      providers: [
+        // instancia AuthProvider, ele ficar disponível globalmente
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+      ],
+      child: const VektorApp(),
+    ),
+  );
 }
 
 class VektorApp extends StatelessWidget {
@@ -37,17 +49,19 @@ class VektorApp extends StatelessWidget {
       routes: {
         '/': (context) => const EnterApp(),
 
-        //visitantes
+        // Visitantes
         '/select-instituition': (context) => const SelectInstitutionScreen(),
         '/home-map': (context) => const HomeMap(),
+
+        // Listas
         '/sectors-list': (context) => const ListDetailsSectors(),
         '/collaborators-list': (context) => const ListDetailsColaborators(),
 
-        //autenticação
+        // Autenticação
         '/register': (context) => const RegisterScreen(),
         '/login': (context) => const LoginScreen(),
 
-        //gerenciamento
+        // Gerenciamento
         '/management': (context) => const ManagementScreen(),
         '/sectors-register': (context) => const SectorRegisterScreen(),
         '/collaborators-register': (context) => const CollaboratorsRegister(),
