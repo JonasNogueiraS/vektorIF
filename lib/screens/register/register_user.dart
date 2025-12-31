@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/core/widgets/background_image.dart';
 import 'package:vektor_if/core/widgets/buttom_generic.dart';
 import 'package:vektor_if/core/widgets/custom_back_button.dart';
 import 'package:vektor_if/core/widgets/forms_widgets.dart';
-import 'package:vektor_if/core/widgets/success_feedback_dialog.dart';
+import 'package:vektor_if/providers/auth_provider.dart'; 
 import 'package:vektor_if/screens/register/controller/register_controller.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -15,48 +16,13 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  // Instanciamos o Controller
   final _controller = RegisterController();
 
   @override
   void dispose() {
-    _controller.dispose(); //limpar os text fields
+    _controller.dispose();
     super.dispose();
-  }
-  //conecta a interface com a Lógica
-  void _onSave() {
-    _controller.registerUser(
-      onSuccess: () async {
-        //feedback visual
-        if (!mounted) return;
-
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => const SuccessFeedbackDialog(
-            title: "Cadastro Realizado!",
-            subtitle: "Você será redirecionado para o gerenciamento...",
-          ),
-        );
-        // Aguarda e Navega
-        await Future.delayed(const Duration(seconds: 2));
-        if (!mounted) return;
-        Navigator.of(context).pop();
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/management',
-          (route) => false,
-        );
-      },
-      onError: (message) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(message),
-            backgroundColor: Colors.red, // erro
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      },
-    );
   }
 
   @override
@@ -70,7 +36,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // --- HEADER ---
+                //HEADER
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
@@ -98,7 +64,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // --- FORMULÁRIO ---
+                //FORMULÁRIO
                 Expanded(
                   child: Container(
                     width: double.infinity,
@@ -118,8 +84,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.all(24),
+                      // Escuta mudanças de UI do Controller (senhas, textos)
                       child: ListenableBuilder(
-                        // ListenableBuilder escuta o controller.
                         listenable: _controller,
                         builder: (context, child) {
                           return Column(
@@ -148,20 +114,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 outlined: true,
                                 isPassword: true,
                                 obscureText: _controller.obscurePassword,
-                                onToggleVisibility:
-                                    _controller.togglePasswordVisibility,
+                                onToggleVisibility: _controller.togglePasswordVisibility,
                               ),
 
                               const FormLabel("Confirme a senha"),
                               GenericInputField(
-                                controller:
-                                    _controller.confirmPasswordController,
+                                controller: _controller.confirmPasswordController,
                                 hint: "********",
                                 outlined: true,
                                 isPassword: true,
                                 obscureText: _controller.obscureConfirmPassword,
-                                onToggleVisibility:
-                                    _controller.toggleConfirmPasswordVisibility,
+                                onToggleVisibility: _controller.toggleConfirmPasswordVisibility,
                               ),
 
                               const SizedBox(height: 30),
@@ -171,9 +134,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 label: "Adicione uma foto da instituição",
                                 onTap: () {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Abrir galeria..."),
-                                    ),
+                                    const SnackBar(content: Text("Funcionalidade futura (Upload de Imagem)")),
                                   );
                                 },
                               ),
@@ -182,8 +143,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                               const FormLabel("Nome da Instituição"),
                               GenericInputField(
-                                controller:
-                                    _controller.institutionNameController,
+                                controller: _controller.institutionNameController,
                                 hint: "ex: Instituto Federal do Maranhão",
                                 outlined: true,
                               ),
@@ -198,10 +158,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               const SizedBox(height: 30),
 
                               // BOTÃO SALVAR
-                              ButtomGeneric(
-                                label: "Salvar",
-                                onPressed: _onSave,
-                                isLoading: _controller.isLoading,
+                              Consumer<AuthProvider>(
+                                builder: (context, authProvider, _) {
+                                  return ButtomGeneric(
+                                    label: "Salvar",
+                                    // Ação vai para o Controller
+                                    onPressed: () => _controller.registerUser(context),
+                                    // Estado de Loading vem do Provider Global
+                                    isLoading: authProvider.isLoading, 
+                                  );
+                                },
                               ),
                               const SizedBox(height: 20),
                             ],

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:vektor_if/core/services/firebase_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:vektor_if/core/widgets/success_feedback_dialog.dart'; 
+import 'package:vektor_if/providers/auth_provider.dart';
 
 class RegisterController extends ChangeNotifier {
-  final AuthService _authService = AuthService();
-
   // Inputs
   final nameController = TextEditingController();
   final emailController = TextEditingController();
@@ -11,8 +11,7 @@ class RegisterController extends ChangeNotifier {
   final confirmPasswordController = TextEditingController();
   final institutionNameController = TextEditingController(); 
   final addressController = TextEditingController(); 
-
-  bool isLoading = false;
+  //visibilidade de senha
   bool obscurePassword = true;
   bool obscureConfirmPassword = true;
 
@@ -26,46 +25,77 @@ class RegisterController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> registerUser({
-    required VoidCallback onSuccess,
-    required Function(String) onError,
-  }) async {
-    // Senhas
+  Future<void> registerUser(BuildContext context) async {
+    // Validação de UI 
     if (passwordController.text != confirmPasswordController.text) {
-      onError("As senhas não coincidem.");
+      _showSnackBar(context, "As senhas não coincidem.", Colors.orange);
       return;
     }
 
-    //  Campos Vazios
     if (nameController.text.isEmpty ||
         emailController.text.isEmpty ||
         passwordController.text.isEmpty ||
         institutionNameController.text.isEmpty ||
         addressController.text.isEmpty) {
-      onError("Preencha todos os campos obrigatórios.");
+      _showSnackBar(context, "Preencha todos os campos obrigatórios.", Colors.orange);
       return;
     }
 
-    isLoading = true;
-    notifyListeners();
+    //Chama o Provider 
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    try {
-      // passando TUDO
-      await _authService.registerUser(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-        name: nameController.text.trim(),
-        institutionName: institutionNameController.text.trim(),
-        institutionAddress: addressController.text.trim(),
-      );
+    await authProvider.register(
+      email: emailController.text.trim(),
+      password: passwordController.text.trim(),
+      name: nameController.text.trim(),
+      institutionName: institutionNameController.text.trim(),
+      institutionAddress: addressController.text.trim(),
+    );
 
-      onSuccess();
-    } catch (e) {
-      onError(e.toString().replaceAll("Exception: ", ""));
-    } finally {
-      isLoading = false;
-      notifyListeners();
+    if (!context.mounted) return;
+
+    //Verifica Resultado
+    if (authProvider.errorMessage != null) {
+      // Erro do Firebase
+      _showSnackBar(context, authProvider.errorMessage!, Colors.red);
+    } else {
+      // Sucesso! Mostra o Dialog de Feedback
+      _showSuccessDialog(context);
     }
+  }
+
+  void _showSnackBar(BuildContext context, String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  void _showSuccessDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const SuccessFeedbackDialog(
+        title: "Cadastro Realizado!",
+        subtitle: "Você será redirecionado para o gerenciamento...",
+      ),
+    );
+
+    Future.delayed(const Duration(seconds: 2), () {
+      if (context.mounted) {
+        // Remove dialog
+        Navigator.of(context).pop(); 
+        // Vai para Management
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/management',
+          (route) => false,
+        );
+      }
+    });
   }
 
   @override
