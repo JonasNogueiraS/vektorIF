@@ -3,8 +3,8 @@ class CollaboratorModel {
   final String name;
   final String email;
   final String phone;
-  final String sectorId; // Vínculo com o setor
-  final String sectorName; // Para facilitar a exibição nas listas
+  final String sectorId;
+  final String sectorName; //facilita a exibição nas listas
   final bool isBoss;
   final String? photoUrl; // Futuro
 

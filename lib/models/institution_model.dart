@@ -2,7 +2,7 @@ class InstitutionModel {
   final String? id; // ID do documento no Firebase
   final String name;
   final String address;
-  final String? photoUrl; // Para a foto que vamos implementar depois
+  final String? photoUrl; // Para a foto
 
   const InstitutionModel({
     this.id,
@@ -15,7 +15,7 @@ class InstitutionModel {
   factory InstitutionModel.fromMap(Map<String, dynamic> map, String docId) {
     return InstitutionModel(
       id: docId,
-      name: map['institutionName'] ?? '', // Note que usamos as chaves que salvamos no registro
+      name: map['institutionName'] ?? '', // usamos chaves que salvamos no registro
       address: map['institutionAddress'] ?? '',
       photoUrl: map['photoUrl'],
     );

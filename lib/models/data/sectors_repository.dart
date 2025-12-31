@@ -19,11 +19,11 @@ class SectorsRepository {
         .add(sector.toMap());
   }
 
-  // Listar Setores (ATUALIZADO: Recebe ID para permitir visitantes)
+  // Listar Setores 
   Stream<List<SectorModel>> getSectorsStream(String institutionId) {
     return _firestore
         .collection('institutions')
-        .doc(institutionId) // <--- Agora usa o ID recebido
+        .doc(institutionId) //usa o ID recebido
         .collection('sectors')
         .orderBy('name')
         .snapshots()
@@ -56,7 +56,7 @@ class SectorsRepository {
     });
   }
 
-  // Métodos de Escrita (Mantêm o uso de _userId para segurança)
+  // Métodos de Escrita (uso  _userId para segurança)
 
   Future<void> updateSectorCoordinates(String sectorId, double x, double y) async {
     if (_userId == null) return;

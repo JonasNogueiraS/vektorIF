@@ -22,7 +22,6 @@ class SectorModel {
   });
 
   // Converte para Map (Banco de Dados)
-  // ATENÇÃO: Aqui não salvamos mapX/mapY soltos, quem salva a lista é o Repository
   Map<String, dynamic> toMap() {
     return {
       'name': name,
@@ -30,14 +29,14 @@ class SectorModel {
       'description': description,
       'email': email,
       'phone': phone,
-      // mapX e mapY não entram aqui pois são salvos separadamente como lista
+      // mapX e mapY são salvos separadamente como lista
     };
   }
 
   // Cria a partir do Banco
   // O banco pode ter um campo 'coordinates' que é uma lista de Maps: [{'x':10, 'y':20}, ...]
-  // Mas para facilitar, este método cria um modelo "base". 
-  // A lógica de criar múltiplos modelos (um para cada ponto) ficará no Repository ou no Editor.
+  // este método cria um modelo "base". 
+  // A lógica de criar múltiplos modelos (um para cada ponto) ficará no Repository
   factory SectorModel.fromMap(Map<String, dynamic> map, String id) {
     return SectorModel(
       id: id,

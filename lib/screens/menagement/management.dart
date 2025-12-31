@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart'; 
 import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/core/widgets/background_image.dart';
 import 'package:vektor_if/core/widgets/buttom_generic.dart';
 import 'package:vektor_if/core/widgets/forms_widgets.dart';
 import 'package:vektor_if/core/widgets/menu_buttons.dart';
 import 'package:vektor_if/core/widgets/success_feedback_dialog.dart';
+import 'package:vektor_if/providers/auth_provider.dart'; 
 import 'package:vektor_if/screens/menagement/controller/managemant_controller.dart';
-import 'package:vektor_if/screens/menagement/widget/institution_cards.dart';
 import 'package:vektor_if/screens/menagement/widget/list_managements.dart';
 
 class ManagementScreen extends StatefulWidget {
@@ -18,35 +18,35 @@ class ManagementScreen extends StatefulWidget {
 }
 
 class _ManagementScreenState extends State<ManagementScreen> {
-  // Instancia o Controller
   final _controller = ManagementController();
 
   @override
   void initState() {
     super.initState();
-    // Carrega os dados assim que a tela abre
     _controller.loadInstitutionData();
   }
 
   @override
   void dispose() {
-    _controller.dispose(); // Limpa a memória
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    //dados do Usuário via Provider
+    final authProvider = context.watch<AuthProvider>();
+    final user = authProvider.user;
+
     return Scaffold(
       backgroundColor: AppTheme.colorBackground,
-      //escuta o controller para atualizar a tela (Loading, Erros, Dados)
       body: ListenableBuilder(
         listenable: _controller,
         builder: (context, child) {
-          // Se estiver carregando os dados iniciais, mostra loading
-          if (_controller.isLoading &&
-              _controller.nameController.text.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          }
+          final institutionName = _controller.nameController.text.isNotEmpty
+              ? _controller.nameController.text
+              : "Carregando instituição...";
+
           return Stack(
             children: [
               const BackgroundImage(),
@@ -54,27 +54,55 @@ class _ManagementScreenState extends State<ManagementScreen> {
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const SizedBox(height: 15),
+                      const SizedBox(height: 20),
 
-                      // HEADER
+                      // --- NOVO HEADER PERSONALIZADO ---
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            "Gerenciamento",
-                            style: Theme.of(context).textTheme.headlineSmall,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Bem-vindo, ${user?.displayName?.split(' ')[0]}",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineSmall
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppTheme.colorBlackText,
+                                      ),
+                                ),
+                                const SizedBox(height: 4),
+                                // Nome da Instituição
+                                Text(
+                                  "Gerencie: $institutionName",
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
+                                        color: AppTheme.colorGrayText,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                      ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
                           ),
+                          // Menu de Opções
                           SettingsMenuButton(
                             options: [
                               MenuOption(
-                                label: "Voltar ao Mapa",
-                                icon: Icons.map,
+                                label: "Tela de visitante",
+                                icon: Icons.map_outlined,
                                 onTap: () {
                                   Navigator.pushNamedAndRemoveUntil(
                                     context,
-                                    '/home-map',
+                                    '/home-map', // Rota de visitante
                                     (route) => false,
                                   );
                                 },
@@ -84,7 +112,8 @@ class _ManagementScreenState extends State<ManagementScreen> {
                                 icon: Icons.logout,
                                 color: Colors.redAccent,
                                 onTap: () async {
-                                  await FirebaseAuth.instance.signOut();
+                                  // Logout via Provider
+                                  await context.read<AuthProvider>().logout();
                                   if (context.mounted) {
                                     Navigator.pushNamedAndRemoveUntil(
                                       context,
@@ -98,36 +127,23 @@ class _ManagementScreenState extends State<ManagementScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10),
-
-                      // CARD DA INSTITUIÇÃO
-                      InstitutionCard(
-                        name: _controller.nameController.text.isNotEmpty
-                            ? _controller.nameController.text
-                            : "Carregando...",
-                        address: _controller.addressController.text.isNotEmpty
-                            ? _controller.addressController.text
-                            : "...",
-                      ),
 
                       const SizedBox(height: 30),
-
-                      //NAVEGAÇÃO
+                      // Opções de Gerenciamento
                       ManagementOptionsList(
-                        onSectorsTap: () {
-                          Navigator.pushNamed(context, '/sectors-list');
-                        },
-                        onColabTap: () {
-                          Navigator.pushNamed(context, '/collaborators-list');
-                        },
-                        onMapTap: () {
-                          Navigator.pushNamed(context, '/map-register');
-                        },
+                        onSectorsTap: () =>
+                            Navigator.pushNamed(context, '/sectors-list'),
+                        onColabTap: () =>
+                            Navigator.pushNamed(context, '/collaborators-list'),
+                        onMapTap: () => Navigator.pushNamed(
+                          context,
+                          '/map-register',
+                        ),
                       ),
 
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 40),
 
-                      Text(
+                      const Text(
                         "Informações da Instituição",
                         style: TextStyle(
                           fontSize: 18,
@@ -137,52 +153,65 @@ class _ManagementScreenState extends State<ManagementScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      //FORMULÁRIO DE EDIÇÃO 
-                      const FormLabel("Nome"),
-                      GenericInputField(
-                        controller: _controller.nameController,
-                        hint: "Nome da Instituição",
-                        outlined: false,
-                      ),
+                      // FORMULÁRIO
+                      if (_controller.isLoading &&
+                          _controller.nameController.text.isEmpty)
+                        const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(20),
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                      else
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const FormLabel("Nome da Instituição"),
+                            GenericInputField(
+                              controller: _controller.nameController,
+                              hint: "Ex: IFMA Campus Caxias",
+                              outlined: false,
+                            ),
 
-                      const SizedBox(height: 16),
+                            const SizedBox(height: 16),
 
-                      const FormLabel("Endereço"),
-                      GenericInputField(
-                        controller: _controller.addressController,
-                        hint: "Endereço da Instituição",
-                        outlined: false,
-                      ),
+                            const FormLabel("Endereço"),
+                            GenericInputField(
+                              controller: _controller.addressController,
+                              hint: "Ex: MA-034, Povoado Descanso",
+                              outlined: false,
+                            ),
+                          ],
+                        ),
 
-                      // Exibe mensagem de erro 
+                      // Mensagem de Erro
                       if (_controller.errorMessage != null)
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
                             _controller.errorMessage!,
-                            style: const TextStyle(color: Colors.red),
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                            ),
                           ),
                         ),
 
-                      const SizedBox(height: 10),
-
-                      //BOTÃO SALVAR
+                      const SizedBox(height: 24),
                       ButtomGeneric(
                         label: "Salvar Alterações",
-                        isLoading:
-                            _controller.isLoading, // Mostra spinner no botão
+                        isLoading: _controller.isLoading,
                         onPressed: () {
                           _controller.saveChanges(
                             onSuccess: () {
                               showDialog(
                                 context: context,
                                 barrierDismissible: false,
-                                builder: (context) =>
-                                    const SuccessFeedbackDialog(
-                                      title: "Sucesso!",
-                                      subtitle:
-                                          "Dados da instituição atualizados.",
-                                    ),
+                                builder: (context) => const SuccessFeedbackDialog(
+                                  title: "Dados Atualizados!",
+                                  subtitle:
+                                      "As informações foram salvas com sucesso.",
+                                ),
                               );
                               Future.delayed(const Duration(seconds: 2), () {
                                 if (context.mounted) Navigator.pop(context);

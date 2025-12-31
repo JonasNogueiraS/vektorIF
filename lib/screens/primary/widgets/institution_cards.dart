@@ -1,63 +1,78 @@
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 
-class InstitutionCards extends StatelessWidget {
+class InstitutionCard extends StatelessWidget {
   final String name;
   final String address;
-  final VoidCallback onTap;
+  final String? imagePath; 
 
-  const InstitutionCards({
+  const InstitutionCard({
     super.key,
     required this.name,
     required this.address,
-    required this.onTap,
+    this.imagePath,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.colorWhiteText,
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.white.withValues(alpha: 0.7),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Color(0x1B000000),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withValues(alpha: .1),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(16),
-        leading: Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            color: const Color(0xFFE8F0FE),
-            borderRadius: BorderRadius.circular(8),
+      child: Row(
+        children: [
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(12),
+              image: imagePath != null
+                  ? DecorationImage(
+                      image: AssetImage(imagePath!),
+                      fit: BoxFit.cover,
+                    )
+                  : null,
+            ),
+            child: imagePath == null
+                ? const Icon(Icons.school, color: Colors.grey)
+                : null,
           ),
-          child: const Icon(Icons.business, color: AppTheme.primaryBlue),
-        ),
-        title: Text(
-          name,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
+          const SizedBox(width: 16),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: AppTheme.colorBlackText
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  address,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: AppTheme.colorGrayText
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        subtitle: Text(
-          address,
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: AppTheme.colorGrayText),
-        ),
-        trailing: const Icon(
-          Icons.arrow_forward_ios,
-          size: 16,
-          color: AppTheme.colorGrayText,
-        ),
-        onTap: onTap,
+        ],
       ),
     );
   }

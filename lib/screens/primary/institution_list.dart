@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/models/institution_model.dart';
 import 'package:vektor_if/models/data/insitution_repository.dart';
-import 'package:vektor_if/screens/menagement/widget/institution_cards.dart';
+import 'package:vektor_if/screens/primary/widgets/institution_cards.dart';
 import 'package:vektor_if/screens/primary/widgets/header_log.dart';
 
 class SelectInstitutionScreen extends StatefulWidget {
