@@ -1,11 +1,14 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/core/themes/size_extensions.dart';
 import 'package:vektor_if/core/widgets/background_image.dart';
 import 'package:vektor_if/core/widgets/buttom_generic.dart';
 import 'package:vektor_if/core/widgets/forms_widgets.dart';
-import 'package:vektor_if/screens/loginscreen/controller/loginController.dart'; 
+import 'package:vektor_if/providers/auth_provider.dart';
+// Importe o seu controller
+import 'package:vektor_if/screens/loginscreen/controller/login_controller.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,34 +16,15 @@ class LoginScreen extends StatefulWidget {
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
+
 class _LoginScreenState extends State<LoginScreen> {
+  // Instancia o Controller
   final _controller = LoginController();
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller.dispose(); //limpar a memória
     super.dispose();
-  }
-
-  //conectado ao Firebase
-  void _handleLogin() {
-    _controller.login(
-      onSuccess: () {
-        if (!mounted) return;
-        // Redireciona para o gerenciamento removendo a tela de login da pilha
-        Navigator.pushNamedAndRemoveUntil(context, '/management', (route) => false);
-      },
-      onError: (message) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(message),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      },
-    );
   }
 
   @override
@@ -54,12 +38,13 @@ class _LoginScreenState extends State<LoginScreen> {
             child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: constraints.maxHeight),
               child: IntrinsicHeight(
-                child: ListenableBuilder( // Ouve as mudanças do Controller
+                // ListenableBuilder reconstrói a tela se o controller notificar
+                child: ListenableBuilder(
                   listenable: _controller,
                   builder: (context, child) {
                     return Column(
                       children: [
-                        // 1. HEADER (Mantido Igual)
+                        // HEADER 
                         SizedBox(
                           height: context.percentHeight(0.38),
                           child: Stack(
@@ -89,7 +74,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                           TextSpan(text: "VEKTOR"),
                                           TextSpan(
                                             text: "IF",
-                                            style: TextStyle(color: Colors.white),
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -97,9 +84,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                     const SizedBox(height: 4),
                                     Text(
                                       "Seu guia institucional",
-                                      style: Theme.of(context).textTheme.bodyMedium
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
                                           ?.copyWith(
-                                            color: AppTheme.colorBlackText.withValues(alpha: 0.6),
+                                            color: AppTheme.colorBlackText
+                                                .withValues(alpha: 0.6),
                                           ),
                                     ),
                                   ],
@@ -109,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
 
-                        // Inputs Conectados ao Controller
+                        //INPUTS 
                         Expanded(
                           child: Padding(
                             padding: EdgeInsets.symmetric(
@@ -121,7 +111,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 const SizedBox(height: 16),
                                 Text(
                                   "FAÇA LOGIN",
-                                  style: Theme.of(context).textTheme.headlineMedium
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium
                                       ?.copyWith(
                                         fontSize: 24,
                                         fontWeight: FontWeight.bold,
@@ -131,7 +123,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                 const FormLabel("E-mail"),
                                 GenericInputField(
-                                  controller: _controller.emailController, // Controller
+                                  controller: _controller
+                                      .emailController, // Controller gerencia
                                   hint: "seuemail@algumacoisa.com",
                                   keyboardType: TextInputType.emailAddress,
                                   outlined: true,
@@ -141,23 +134,26 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                 const FormLabel("Senha"),
                                 GenericInputField(
-                                  controller: _controller.passwordController, // Controller
+                                  controller: _controller
+                                      .passwordController, // Controller gerencia
                                   hint: "******",
                                   isPassword: true,
                                   outlined: true,
-                                  obscureText: _controller.obscurePassword, // Estado
-                                  onToggleVisibility: _controller.togglePasswordVisibility, // Ação
+                                  obscureText: _controller
+                                      .obscurePassword, // Estado do Controller
+                                  onToggleVisibility: _controller
+                                      .togglePasswordVisibility, // Ação do Controller
                                 ),
 
                                 Align(
                                   alignment: Alignment.centerRight,
                                   child: TextButton(
-                                    onPressed: () {
-                                      // Implementar recuperação de senha futuramente!!!
-                                    },
+                                    onPressed: () {},
                                     child: Text(
                                       "Esqueceu sua senha?",
-                                      style: Theme.of(context).textTheme.labelSmall
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelSmall
                                           ?.copyWith(
                                             fontWeight: FontWeight.bold,
                                             color: AppTheme.colorBlackText,
@@ -168,17 +164,24 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                 const SizedBox(height: 16),
 
-                                ButtomGeneric(
-                                  label: "ENTRAR",
-                                  onPressed: _handleLogin, // login real
-                                  isLoading: _controller.isLoading, //Loading real
+                                // BOTÃO CONECTADO
+                                // O isLoading vem do Provider, pois é um estado global de rede
+                                Consumer<AuthProvider>(
+                                  builder: (context, authProvider, _) {
+                                    return ButtomGeneric(
+                                      label: "ENTRAR",
+                                      onPressed: () =>
+                                          _controller.login(context),
+                                      isLoading: authProvider.isLoading,
+                                    );
+                                  },
                                 ),
                               ],
                             ),
                           ),
                         ),
 
-                        // 3. RODAPÉ (Mantido Igual)
+                        //RODAPÉ
                         SafeArea(
                           top: false,
                           child: Padding(
