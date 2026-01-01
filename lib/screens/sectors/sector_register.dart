@@ -26,6 +26,7 @@ class _SectorRegisterScreenState extends State<SectorRegisterScreen> {
 
   void _handleSave() {
     _controller.saveSector(
+      context,
       onSuccess: () {
         if (!mounted) return;
 
@@ -165,7 +166,7 @@ class _SectorRegisterScreenState extends State<SectorRegisterScreen> {
                   ListenableBuilder(
                     listenable: _controller,
                     builder: (context, child) {
-                      if (_controller.isLoading) {
+                      if (_controller.isSaving) {
                         return const Center(child: CircularProgressIndicator());
                       }
                       return ButtonsSectors(onSave: _handleSave);

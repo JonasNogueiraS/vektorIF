@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/core/themes/size_extensions.dart';
 import 'package:vektor_if/core/widgets/background_image.dart';
 import 'package:vektor_if/core/widgets/buttom_generic.dart';
+import 'package:vektor_if/core/widgets/confirmation_dialog.dart';
 import 'package:vektor_if/core/widgets/custom_back_button.dart';
-import 'package:vektor_if/models/colaborators_model.dart';
-import 'package:vektor_if/models/data/colaborators_repository.dart';
+import 'package:vektor_if/providers/auth_provider.dart';
+import 'package:vektor_if/providers/collaborator_provider.dart';
 import 'package:vektor_if/screens/lists/widgets/colaborators_cards.dart';
 import 'package:vektor_if/screens/lists/widgets/search_colaborators.dart';
 
@@ -18,10 +20,51 @@ class ListDetailsColaborators extends StatefulWidget {
 }
 
 class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
-  final _repository = CollaboratorRepository();
+  String _searchQuery = "";
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final user = context.read<AuthProvider>().user;
+      if (user != null) {
+        context.read<CollaboratorProvider>().startListeningToCollaborators(
+          user.uid,
+        );
+      }
+    });
+  }
+
+  void _confirmDelete(String id) {
+    showDialog(
+      context: context,
+      builder: (context) => ConfirmationDialog(
+        title: "Remover Colaborador?",
+        subtitle: "Tem certeza que deseja remover este colaborador da lista?",
+        confirmLabel: "Remover",
+        isDestructive: true,
+        onConfirm: () async {
+          final user = context.read<AuthProvider>().user;
+          if (user != null) {
+            await context.read<CollaboratorProvider>().deleteCollaborator(
+              user.uid,
+              id,
+            );
+          }
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<CollaboratorProvider>();
+    final isLoading = provider.isLoading;
+
+    final filteredList = provider.collaborators.where((colab) {
+      return colab.name.toLowerCase().contains(_searchQuery.toLowerCase());
+    }).toList();
+
     return Scaffold(
       backgroundColor: AppTheme.colorBackground,
       body: Stack(
@@ -36,95 +79,68 @@ class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
               child: Column(
                 children: [
                   const SizedBox(height: 10),
-
                   _buildHeader(context),
-
                   SizedBox(height: context.percentHeight(0.03)),
 
                   SearchList(
-                    onSearchChanged: (value) {},
+                    onSearchChanged: (val) =>
+                        setState(() => _searchQuery = val),
                     onFilterTap: () {},
                   ),
 
                   SizedBox(height: context.percentHeight(0.02)),
 
-                  //Expanded 
+                  // LISTA
                   Expanded(
-                    child: Align(
-                      alignment: Alignment.topCenter, // Garante que começa do topo
-                      child: SingleChildScrollView(
-                        // Permite rolar se a lista crescer além do espaço
-                        physics: const ClampingScrollPhysics(),
-                        child: StreamBuilder<List<CollaboratorModel>>(
-                          stream: _repository.getCollaboratorsStream(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              return const Center(child: CircularProgressIndicator());
-                            }
-
-                            if (snapshot.hasError) {
-                              return const Center(child: Text("Erro ao carregar."));
-                            }
-
-                            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return const Center(
-                                child: Text(
-                                  "Nenhum colaborador cadastrado.",
-                                  style: TextStyle(color: Colors.grey),
+                    child: isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : filteredList.isEmpty
+                        ? const Center(
+                            child: Text("Nenhum colaborador encontrado."),
+                          )
+                        : Container(
+                            clipBehavior: Clip.hardEdge,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.05),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
                                 ),
-                              );
-                            }
-
-                            final employees = snapshot.data!;
-
-                            return Container(
-                              clipBehavior: Clip.hardEdge,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.05),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
+                              ],
+                            ),
+                            child: ListView.separated(
+                              padding: EdgeInsets.zero,
+                              itemCount: filteredList.length,
+                              separatorBuilder: (_, __) => const Divider(
+                                height: 1,
+                                thickness: 0.5,
+                                indent: 16,
+                                endIndent: 16,
+                                color: AppTheme.primaryBlue,
                               ),
-                              // ListView agora se comporta como um bloco de conteúdo
-                              child: ListView.separated(
-                                padding: EdgeInsets.zero,
-                                shrinkWrap: true, //  Ocupa só o necessário
-                                physics: const NeverScrollableScrollPhysics(), // Quem rola é o SingleChildScrollView pai
-                                itemCount: employees.length,
-                                separatorBuilder: (_, __) => const Divider(
-                                  height: 2.5,
-                                  thickness: 0.5,
-                                  indent: 10,
-                                  endIndent: 16,
-                                  color:AppTheme.primaryBlue,
-                                ),
-                                itemBuilder: (context, index) {
-                                  final employee = employees[index];
+                              itemBuilder: (context, index) {
+                                final colab = filteredList[index];
 
-                                  return ColaboratorsCards(
-                                    name: employee.name,
-                                    email: employee.email,
-                                    sector: employee.sectorName,
-                                    isBoss: employee.isBoss,
-                                    onEdit: () {},
-                                    onDelete: () {
-                                      if (employee.id != null) {
-                                        _repository.deleteCollaborator(employee.id!);
-                                      }
-                                    },
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
+                                return ColaboratorsCards(
+                                  name: colab.name,
+                                  email: colab.email,
+                                  sector: colab.sectorName,
+                                  isBoss: colab.isBoss,
+                                  onEdit: () {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text("Edição em breve!"),
+                                      ),
+                                    );
+                                  },
+                                  onDelete: () => _confirmDelete(colab.id!),
+                                );
+                              },
+                            ),
+                          ),
                   ),
 
                   SizedBox(height: context.percentHeight(0.02)),
@@ -132,9 +148,8 @@ class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
                   ButtomGeneric(
                     label: "Adicionar Colaborador",
                     backgroundColor: AppTheme.colorButtons,
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/collaborators-register');
-                    },
+                    onPressed: () =>
+                        Navigator.pushNamed(context, '/collaborators-register'),
                   ),
                 ],
               ),
@@ -153,14 +168,11 @@ class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
         Text(
           "Colaboradores",
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontSize: 20,
+            fontSize: 22,
             fontWeight: FontWeight.bold,
           ),
         ),
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.menu, color: Color(0xff49454F)),
-        ),
+        const SizedBox(width: 48),
       ],
     );
   }

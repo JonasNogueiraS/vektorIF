@@ -1,29 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vektor_if/models/sectors_model.dart';
-import 'package:vektor_if/models/data/sectors_repository.dart';
+import 'package:vektor_if/providers/auth_provider.dart';
+import 'package:vektor_if/providers/sector_provider.dart';
 
 class SectorRegisterController extends ChangeNotifier {
-  final _repository = SectorsRepository();
-
+  // Inputs
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
   final descriptionController = TextEditingController();
 
-  //
+  // Estados de UI
   String? selectedCategory;
   final List<String> categories = [
     "Laboratório",
     "Administrativo",
     "Técnico",
-    "Utilidades"
+    "Utilidades",
   ];
 
   bool noEmail = false;
   bool noPhone = false;
-  bool isLoading = false;
+  bool isSaving = false;
 
-  // SETTER DA CATEGORIA 
   void setCategory(String? value) {
     selectedCategory = value;
     notifyListeners();
@@ -41,41 +41,51 @@ class SectorRegisterController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> saveSector({
+  // Ação de Salvar
+  Future<void> saveSector(
+    BuildContext context, {
     required VoidCallback onSuccess,
     required Function(String) onError,
   }) async {
-    // Validação
+    // 1. Validações Locais
     if (nameController.text.isEmpty) {
       onError("O nome do setor é obrigatório.");
       return;
     }
-    // Validação da Categoria
     if (selectedCategory == null) {
       onError("Selecione a categoria do setor.");
       return;
     }
 
-    isLoading = true;
+    // 2. Preparação
+    isSaving = true;
     notifyListeners();
 
     try {
+      // Pega o UID do usuário logado através do AuthProvider
+      final user = context.read<AuthProvider>().user;
+      if (user == null) throw Exception("Usuário não identificado.");
+
+      // Cria o modelo
       final newSector = SectorModel(
         name: nameController.text.trim(),
-        category: selectedCategory!, 
+        category: selectedCategory!,
         email: noEmail ? null : emailController.text.trim(),
         phone: noPhone ? null : phoneController.text.trim(),
         description: descriptionController.text.trim(),
       );
 
-      await _repository.addSector(newSector);
-      
+      // 3. Chama o SectorProvider para salvar no banco
+      await context.read<SectorProvider>().addSector(
+        institutionId: user.uid,
+        sector: newSector,
+      );
+
       onSuccess();
-      
     } catch (e) {
-      onError("Erro ao salvar: $e");
+      onError(e.toString());
     } finally {
-      isLoading = false;
+      isSaving = false;
       notifyListeners();
     }
   }

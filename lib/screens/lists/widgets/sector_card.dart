@@ -20,22 +20,22 @@ class SectorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppTheme.colorWhiteText, 
+      color: Colors.white, //fundo branco
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         
-        // ÍCONE DO SETOR (Roxo padrão)
+        // ÍCONE
         leading: CircleAvatar(
           backgroundColor: AppTheme.colorLogo.withValues(alpha: 0.1),
           radius: 24,
           child: const Icon(
-            Icons.domain, // Ícone de Prédio/Setor
+            Icons.domain, 
             color: AppTheme.colorLogo,
             size: 24,
           ),
         ),
 
-        // Nome do Setor
+        // TÍTULO
         title: Text(
           name,
           style: const TextStyle(
@@ -46,20 +46,30 @@ class SectorCard extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
 
-        //SUBTÍTULO
+        // Telefone + Descrição
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (phone.isNotEmpty && phone != "Sem telefone")
-              Text(
-                phone,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black87,
-                  fontSize: 13,
-                ),
+            if (phone.isNotEmpty && phone != "Sem telefone") ...[
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  const Icon(Icons.phone, size: 12, color: Colors.grey),
+                  const SizedBox(width: 4),
+                  Text(
+                    phone,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
               ),
-            if (description.isNotEmpty)
+            ],
+            
+            if (description.isNotEmpty) ...[
+              const SizedBox(height: 4),
               Text(
                 description,
                 style: TextStyle(
@@ -69,10 +79,11 @@ class SectorCard extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
+            ],
           ],
         ),
 
-        //AÇÕES
+        // BOTÕES DE AÇÃO
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [   
@@ -81,7 +92,6 @@ class SectorCard extends StatelessWidget {
               onPressed: onEdit,
               tooltip: "Editar",
             ),        
-    
             IconButton(
               icon: const Icon(Icons.delete_outline, size: 20, color: Colors.redAccent),
               onPressed: onDelete,

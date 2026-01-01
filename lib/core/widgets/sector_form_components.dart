@@ -87,6 +87,9 @@ class SectorCategoryDropdown extends StatelessWidget {
               ),
               isExpanded: true,
               icon: const Icon(Icons.arrow_drop_down),
+              menuMaxHeight: 300,
+              borderRadius: BorderRadius.circular(10),
+              elevation: 2,
               items: categories.map((String category) {
                 return DropdownMenuItem<String>(
                   value: category,

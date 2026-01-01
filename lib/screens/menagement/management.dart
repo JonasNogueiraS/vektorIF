@@ -58,7 +58,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
                     children: [
                       const SizedBox(height: 20),
 
-                      // --- NOVO HEADER PERSONALIZADO ---
+                      //NOVO HEADER
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -83,7 +83,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
                                   "Gerencie: $institutionName",
                                   style: Theme.of(context).textTheme.bodyMedium
                                       ?.copyWith(
-                                        color: AppTheme.colorGrayText,
+                                        color: AppTheme.colorLogo,
                                         fontWeight: FontWeight.w600,
                                         fontSize: 14,
                                       ),

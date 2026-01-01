@@ -5,7 +5,7 @@ import 'package:vektor_if/models/institution_model.dart';
 class ManagementController extends ChangeNotifier {
   final InstitutionRepository _repository = InstitutionRepository();
   
-  // Controllers de Texto para os campos da tela
+  // Controllers de Texto 
   final nameController = TextEditingController();
   final addressController = TextEditingController();
   

@@ -5,8 +5,8 @@ class SectorModel {
   final String? description;
   final String? email;
   final String? phone;
-  
-  //cada pino tem uma posição única
+
+  // Coordenadas (opcionais na criação)
   final double? mapX;
   final double? mapY;
 
@@ -21,7 +21,7 @@ class SectorModel {
     this.mapY,
   });
 
-  // Converte para Map (Banco de Dados)
+  // Converte para Map (Salvar no Firebase)
   Map<String, dynamic> toMap() {
     return {
       'name': name,
@@ -29,24 +29,25 @@ class SectorModel {
       'description': description,
       'email': email,
       'phone': phone,
-      // mapX e mapY são salvos separadamente como lista
+      // Nota: mapX e mapY geralmente são salvos via editor de mapa,
+      // mas se quiser salvar na criação, pode descomentar:
+      // 'mapX': mapX,
+      // 'mapY': mapY,
     };
   }
 
-  // Cria a partir do Banco
-  // O banco pode ter um campo 'coordinates' que é uma lista de Maps: [{'x':10, 'y':20}, ...]
-  // este método cria um modelo "base". 
-  // A lógica de criar múltiplos modelos (um para cada ponto) ficará no Repository
+  // Cria a partir do Map (Ler do Firebase)
   factory SectorModel.fromMap(Map<String, dynamic> map, String id) {
     return SectorModel(
       id: id,
       name: map['name'] ?? '',
-      category: map['category'] ?? '',
+      category: map['category'] ?? 'Geral',
       description: map['description'],
       email: map['email'],
       phone: map['phone'],
-      mapX: map['mapX'],
-      mapY: map['mapY'],
+      // Converte para double com segurança
+      mapX: (map['mapX'] as num?)?.toDouble(),
+      mapY: (map['mapY'] as num?)?.toDouble(),
     );
   }
 

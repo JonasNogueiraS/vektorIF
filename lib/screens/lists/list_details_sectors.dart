@@ -1,14 +1,15 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/core/themes/size_extensions.dart';
 import 'package:vektor_if/core/widgets/background_image.dart';
 import 'package:vektor_if/core/widgets/buttom_generic.dart';
+import 'package:vektor_if/core/widgets/confirmation_dialog.dart';
 import 'package:vektor_if/core/widgets/custom_back_button.dart';
-import 'package:vektor_if/models/sectors_model.dart';
-import 'package:vektor_if/models/data/sectors_repository.dart';
-import 'package:vektor_if/screens/lists/widgets/search_colaborators.dart';
-import 'package:vektor_if/screens/lists/widgets/sector_card.dart'; 
+import 'package:vektor_if/providers/auth_provider.dart';
+import 'package:vektor_if/providers/sector_provider.dart';
+import 'package:vektor_if/screens/lists/widgets/search_colaborators.dart'; 
+import 'package:vektor_if/screens/lists/widgets/sector_card.dart';
 
 class ListDetailsSectors extends StatefulWidget {
   const ListDetailsSectors({super.key});
@@ -18,10 +19,52 @@ class ListDetailsSectors extends StatefulWidget {
 }
 
 class _ListDetailsSectorsState extends State<ListDetailsSectors> {
-  final _repository = SectorsRepository();
+  String _searchQuery = "";
+
+  @override
+  void initState() {
+    super.initState();
+    // Inicia a escuta dos setores assim que a tela abre
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final user = context.read<AuthProvider>().user;
+      if (user != null) {
+        context.read<SectorProvider>().startListeningToSectors(user.uid);
+      }
+    });
+  }
+
+  // Função para deletar 
+void _confirmDelete(String sectorId) {
+    showDialog(
+      context: context,
+      builder: (context) => ConfirmationDialog(
+        title: "Excluir Setor?",
+        subtitle: "Essa ação não pode ser desfeita e todos os dados deste setor serão perdidos.",
+        confirmLabel: "Excluir",
+        isDestructive: true,
+        onConfirm: () async {
+          // então aquicolocamos a ação de deletar.
+          final user = context.read<AuthProvider>().user;
+          if (user != null) {
+            await context.read<SectorProvider>().deleteSector(user.uid, sectorId);
+          }
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Consumindo o Provider
+    final sectorProvider = context.watch<SectorProvider>();
+    final isLoading = sectorProvider.isLoading;
+    
+    // Lógica de Busca
+    final filteredSectors = sectorProvider.sectors.where((sector) {
+      final query = _searchQuery.toLowerCase();
+      return sector.name.toLowerCase().contains(query);
+    }).toList();
+
     return Scaffold(
       backgroundColor: AppTheme.colorBackground,
       body: Stack(
@@ -37,102 +80,79 @@ class _ListDetailsSectorsState extends State<ListDetailsSectors> {
                 children: [
                   const SizedBox(height: 10),
 
+                  // Header
                   _buildHeader(context),
 
                   SizedBox(height: context.percentHeight(0.03)),
 
+                  // Barra de Pesquis
                   SearchList(
-                    onSearchChanged: (value) {},
-                    onFilterTap: () {},
+                    onSearchChanged: (value) {
+                      setState(() {
+                        _searchQuery = value;
+                      });
+                    },
+                    onFilterTap: () {
+                      // Implementar filtros 
+                    },
                   ),
 
                   SizedBox(height: context.percentHeight(0.02)),
 
-                  //LISTA
+                  // LISTA REATIVA
                   Expanded(
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: SingleChildScrollView(
-                        physics: const ClampingScrollPhysics(), 
-                        child: StreamBuilder<List<SectorModel>>(
-                          stream: _repository.getSectorsStream(FirebaseAuth.instance.currentUser!.uid),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-
-                            if (snapshot.hasError) {
-                              return const Center(
-                                child: Text("Erro ao carregar dados."),
-                              );
-                            }
-
-                            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return const Center(
+                    child: isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : filteredSectors.isEmpty
+                            ? Center(
                                 child: Text(
-                                  "Nenhum setor cadastrado.",
-                                  style: TextStyle(color: Colors.grey),
+                                  _searchQuery.isEmpty 
+                                      ? "Nenhum setor cadastrado." 
+                                      : "Nenhum setor encontrado.",
+                                  style: const TextStyle(color: Colors.grey),
                                 ),
-                              );
-                            }
-
-                            final allSectors = snapshot.data!;
-                           //elimina duplicatas automaticamente.
-                            final uniqueSectorsMap = {
-                              for (var sector in allSectors) sector.id: sector
-                            };
-                            // Converte de volta para lista para usar no ListView
-                            final uniqueList = uniqueSectorsMap.values.toList();
-
-                            return Container(
-                              clipBehavior: Clip.hardEdge,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.05),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
+                              )
+                            : Container(
+                                clipBehavior: Clip.hardEdge,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(alpha: 0.05),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: ListView.separated(
+                                  padding: EdgeInsets.zero,
+                                  // Removemos NeverScrollableScrollPhysics para a lista rolar dentro do Expanded
+                                  itemCount: filteredSectors.length,
+                                  separatorBuilder: (_, __) => const Divider(
+                                    height: 1,
+                                    thickness: 0.5,
+                                    indent: 16,
+                                    endIndent: 16,
+                                    color: AppTheme.primaryBlue,
                                   ),
-                                ],
-                              ),
-                              child: ListView.separated(
-                                padding: EdgeInsets.zero,
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: uniqueList.length, //lista filtrada
-                                separatorBuilder: (_, __) => const Divider(
-                                  height: 2.5,
-                                  thickness: 0.5,
-                                  indent: 10, 
-                                  endIndent: 16,
-                                  color: AppTheme.primaryBlue,
+                                  itemBuilder: (context, index) {
+                                    final sector = filteredSectors[index];
+                                    return SectorCard(
+                                      name: sector.name,
+                                      phone: sector.phone ?? "Sem telefone",
+                                      description: sector.description ?? "",
+                                      onEdit: () {
+                                      },
+                                      onDelete: () {
+                                        if (sector.id != null) {
+                                          _confirmDelete(sector.id!);
+                                        }
+                                      },
+                                    );
+                                  },
                                 ),
-                                itemBuilder: (context, index) {
-                                  final sector = uniqueList[index]; //item filtrado
-                                  return SectorCard(
-                                    name: sector.name,
-                                    phone: sector.phone ?? "",
-                                    description: (sector.description ?? "Sem descrição"),
-                                    onEdit: () {
-                                      // Futuro
-                                    },
-                                    onDelete: () {
-                                      if (sector.id != null) {
-                                        _repository.deleteSector(sector.id!);
-                                      }
-                                    },
-                                  );
-                                },
                               ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
                   ),
 
                   SizedBox(height: context.percentHeight(0.02)),
@@ -161,14 +181,12 @@ class _ListDetailsSectorsState extends State<ListDetailsSectors> {
         Text(
           "Setores",
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
         ),
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.menu, color: Color(0xff49454F)),
-        ),
+        // Menu placeholder (pode ser removido se não usar)
+        const SizedBox(width: 48), 
       ],
     );
   }

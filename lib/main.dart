@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/firebase_options.dart';
 import 'package:vektor_if/providers/auth_provider.dart';
+import 'package:vektor_if/providers/collaborator_provider.dart';
+import 'package:vektor_if/providers/sector_provider.dart';
 // Telas
 import 'package:vektor_if/screens/collaborators/collaborators_register.dart';
 import 'package:vektor_if/screens/lists/list_details_colaborators.dart';
@@ -29,6 +31,8 @@ void main() async {
       providers: [
         // instancia AuthProvider, ele ficar disponível globalmente
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => SectorProvider()),
+        ChangeNotifierProvider(create: (_) => CollaboratorProvider()),
       ],
       child: const VektorApp(),
     ),
