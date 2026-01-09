@@ -12,9 +12,9 @@ class SectorProvider extends ChangeNotifier {
   List<SectorModel> get sectors => _sectors;
   bool get isLoading => _isLoading;
 
-  // --- AÇÕES ---
+  // AÇÕES
 
-  // 1. Escutar Setores em Tempo Real (Listagem)
+  //Listagem
   void startListeningToSectors(String institutionId) {
     _setLoading(true);
     
@@ -37,7 +37,7 @@ class SectorProvider extends ChangeNotifier {
     });
   }
 
-  // 2. Adicionar Setor
+  //Adicionar Setor
   Future<void> addSector({
     required String institutionId,
     required SectorModel sector,
@@ -50,7 +50,6 @@ class SectorProvider extends ChangeNotifier {
           .collection('sectors')
           .add(sector.toMap());
       
-      // Não precisa adicionar na lista manual, o listener acima atualiza sozinho
     } catch (e) {
       rethrow; // Joga o erro para a tela tratar
     } finally {
@@ -58,7 +57,29 @@ class SectorProvider extends ChangeNotifier {
     }
   }
 
-  // 3. Deletar Setor
+  Future<void> updateSector({
+    required String institutionId,
+    required SectorModel sector,
+  }) async {
+    _setLoading(true);
+    try {
+      if (sector.id == null) throw Exception("ID do setor inválido para edição");
+
+      await _firestore
+          .collection('institutions')
+          .doc(institutionId)
+          .collection('sectors')
+          .doc(sector.id)
+          .update(sector.toMap());
+          
+    } catch (e) {
+      rethrow;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  //Deletar Setor
   Future<void> deleteSector(String institutionId, String sectorId) async {
     try {
       await _firestore

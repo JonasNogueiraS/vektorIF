@@ -96,7 +96,7 @@ class ColaboratorsCards extends StatelessWidget {
           ],
         ),
 
-        // 4. AÇÕES
+        // AÇÕES
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [   

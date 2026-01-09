@@ -10,12 +10,32 @@ class CollaboratorsController extends ChangeNotifier {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
-  
+
   // Estado
   bool isBoss = false;
   SectorModel? selectedSector;
   bool isSaving = false;
 
+  String? _editingId;
+  bool get isEditing => _editingId != null;
+
+  void loadDataForEditing(CollaboratorModel colab, List<SectorModel> allSectors) {
+    _editingId = colab.id;
+    nameController.text = colab.name;
+    emailController.text = colab.email;
+    phoneController.text = colab.phone;
+    isBoss = colab.isBoss;
+
+    // Encontrar o setor correto na lista para o Dropdown funcionar
+    try {
+      selectedSector = allSectors.firstWhere((s) => s.id == colab.sectorId);
+    } catch (e) {
+      print("Setor do colaborador não encontrado na lista atual");
+      selectedSector = null;
+    }
+    notifyListeners();
+  }
+  
   // Ações de UI
   void toggleBoss(bool? value) {
     isBoss = value ?? false;
@@ -28,7 +48,8 @@ class CollaboratorsController extends ChangeNotifier {
   }
 
   // Salvar
-  Future<void> saveEmployee(BuildContext context, {
+  Future<void> saveEmployee(
+    BuildContext context, {
     required VoidCallback onSuccess,
     required Function(String) onError,
   }) async {
@@ -63,10 +84,9 @@ class CollaboratorsController extends ChangeNotifier {
         institutionId: user.uid,
         collaborator: newCollaborator,
       );
-      
+
       _clearForm();
       onSuccess();
-
     } catch (e) {
       onError("Erro ao salvar: $e");
     } finally {

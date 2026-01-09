@@ -4,6 +4,7 @@ import 'package:vektor_if/core/themes/size_extensions.dart';
 import 'package:vektor_if/core/widgets/background_image.dart';
 import 'package:vektor_if/core/widgets/forms_widgets.dart';
 import 'package:vektor_if/core/widgets/success_feedback_dialog.dart';
+import 'package:vektor_if/models/sectors_model.dart';
 import 'package:vektor_if/screens/sectors/controller/sector_register_controller.dart';
 import 'package:vektor_if/screens/sectors/widgets/buttons_sectors.dart';
 import 'package:vektor_if/core/widgets/sector_form_components.dart';
@@ -17,6 +18,18 @@ class SectorRegisterScreen extends StatefulWidget {
 
 class _SectorRegisterScreenState extends State<SectorRegisterScreen> {
   final _controller = SectorRegisterController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Usamos addPostFrameCallback para acessar os argumentos da rota com segurança
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final args = ModalRoute.of(context)?.settings.arguments;
+      if (args is SectorModel) {
+        _controller.loadDataForEditing(args);
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -82,9 +95,12 @@ class _SectorRegisterScreenState extends State<SectorRegisterScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        "Gestão de Setores",
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: 20),
+                       ListenableBuilder(
+                        listenable: _controller,
+                        builder: (context, _) => Text(
+                          _controller.isEditing ? "Editar Setor" : "Gestão de Setores",
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: 20),
+                        ),
                       ),
                     ],
                   ),

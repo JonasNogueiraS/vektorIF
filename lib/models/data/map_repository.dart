@@ -10,7 +10,7 @@ class MapRepository {
 
   String? get _userId => _auth.currentUser?.uid;
 
-  // --- MÉTODOS DE LEITURA ---
+  //MÉTODOS DE LEITURA
 
   // 1. CORREÇÃO DO ERRO: Método que aceita ID externo (para visitantes)
   Future<String?> getMapUrl(String institutionId) async {
@@ -33,7 +33,7 @@ class MapRepository {
     return getMapUrl(_userId!); // Reutiliza a lógica acima
   }
 
-  // --- MÉTODOS DE ESCRITA (Somente Logado) ---
+  //MÉTODOS DE ESCRITA (Somente Logado)
 
   Future<void> uploadMapImage(File imageFile) async {
     if (_userId == null) return;

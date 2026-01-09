@@ -24,6 +24,35 @@ class SectorRegisterController extends ChangeNotifier {
   bool noPhone = false;
   bool isSaving = false;
 
+  String? _editingId; 
+  bool get isEditing => _editingId != null;
+
+  void loadDataForEditing(SectorModel sector) {
+    _editingId = sector.id;
+    nameController.text = sector.name;
+    selectedCategory = sector.category; // Certifique-se que a categoria existe na lista
+    descriptionController.text = sector.description ?? "";
+    
+    // Lógica para Email
+    if (sector.email == null || sector.email!.isEmpty) {
+      noEmail = true;
+      emailController.clear();
+    } else {
+      noEmail = false;
+      emailController.text = sector.email!;
+    }
+
+    // Lógica para Telefone
+    if (sector.phone == null || sector.phone!.isEmpty) {
+      noPhone = true;
+      phoneController.clear();
+    } else {
+      noPhone = false;
+      phoneController.text = sector.phone!;
+    }
+    notifyListeners();
+  }
+
   void setCategory(String? value) {
     selectedCategory = value;
     notifyListeners();

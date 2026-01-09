@@ -55,6 +55,11 @@ class _ManagementScreenState extends State<ManagementScreen> {
               ? _controller.nameController.text
               : "Carregando...";
 
+          final institutionAddress =
+              _controller.addressController.text.isNotEmpty
+              ? _controller.addressController.text
+              : "Carregando endereço";
+
           return Stack(
             children: [
               const BackgroundImage(),
@@ -110,7 +115,6 @@ class _ManagementScreenState extends State<ManagementScreen> {
                                   ],
                                 ),
 
-
                                 SizedBox(height: context.percentHeight(0.05)),
 
                                 Column(
@@ -128,7 +132,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
                                     ),
                                     const SizedBox(height: 10),
                                     Text(
-                                      "Gerencie: $institutionName",
+                                      institutionName,
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium
@@ -140,13 +144,24 @@ class _ManagementScreenState extends State<ManagementScreen> {
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                     ),
+                                    Text(
+                                      "Localização: $institutionAddress",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: AppTheme.colorLogo,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 12,
+                                          ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ],
                                 ),
 
-                                
                                 SizedBox(height: context.percentHeight(0.10)),
 
-                              
                                 ManagementOptionsList(
                                   onSectorsTap: () => Navigator.pushNamed(
                                     context,

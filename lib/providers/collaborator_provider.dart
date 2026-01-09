@@ -11,7 +11,7 @@ class CollaboratorProvider extends ChangeNotifier {
   List<CollaboratorModel> get collaborators => _collaborators;
   bool get isLoading => _isLoading;
 
-  // --- AÇÕES ---
+  // AÇÕES 
 
   // 1. Listar (Escuta em Tempo Real)
   void startListeningToCollaborators(String institutionId) {
@@ -74,7 +74,36 @@ class CollaboratorProvider extends ChangeNotifier {
     }
   }
 
-  // 3. Deletar
+  Future<void> updateCollaborator({
+    required String institutionId,
+    required CollaboratorModel collaborator,
+  }) async {
+    _setLoading(true);
+    try {
+      if (collaborator.id == null) throw Exception("ID inválido");
+
+      final collectionRef = _firestore
+          .collection('institutions')
+          .doc(institutionId)
+          .collection('collaborators');
+
+      // Se virou chefe, rebaixa o anterior
+      if (collaborator.isBoss) {
+        await _demoteCurrentBoss(collectionRef, collaborator.sectorId);
+      }
+
+      await collectionRef
+          .doc(collaborator.id)
+          .update(collaborator.toMap());
+
+    } catch (e) {
+      rethrow;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // Deletar
   Future<void> deleteCollaborator(String institutionId, String collaboratorId) async {
     try {
       await _firestore

@@ -130,10 +130,10 @@ class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
                                   sector: colab.sectorName,
                                   isBoss: colab.isBoss,
                                   onEdit: () {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text("Edição em breve!"),
-                                      ),
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/collaborators-register',
+                                      arguments: colab,
                                     );
                                   },
                                   onDelete: () => _confirmDelete(colab.id!),

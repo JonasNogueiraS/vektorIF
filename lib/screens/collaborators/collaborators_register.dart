@@ -5,6 +5,7 @@ import 'package:vektor_if/core/themes/size_extensions.dart';
 import 'package:vektor_if/core/widgets/background_image.dart';
 import 'package:vektor_if/core/widgets/forms_widgets.dart';
 import 'package:vektor_if/core/widgets/success_feedback_dialog.dart';
+import 'package:vektor_if/models/colaborators_model.dart';
 import 'package:vektor_if/models/sectors_model.dart';
 import 'package:vektor_if/providers/auth_provider.dart';
 import 'package:vektor_if/providers/sector_provider.dart';
@@ -24,14 +25,20 @@ class _CollaboratorsRegisterState extends State<CollaboratorsRegister> {
   @override
   void initState() {
     super.initState();
-    // Garante que a lista de setores está atualizada
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final user = context.read<AuthProvider>().user;
       final sectorProvider = context.read<SectorProvider>();
 
-      // Se temos usuário e a lista de setores está vazia, carregar
+      // 1. Carrega Setores se precisar
       if (user != null && sectorProvider.sectors.isEmpty) {
         sectorProvider.startListeningToSectors(user.uid);
+      }
+
+      // 2. Verifica se é edição
+      final args = ModalRoute.of(context)?.settings.arguments;
+      if (args is CollaboratorModel) {
+        // Passamos a lista atual de setores para o controller achar o correto
+        _controller.loadDataForEditing(args, sectorProvider.sectors);
       }
     });
   }

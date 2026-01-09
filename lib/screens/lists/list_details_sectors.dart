@@ -8,7 +8,7 @@ import 'package:vektor_if/core/widgets/confirmation_dialog.dart';
 import 'package:vektor_if/core/widgets/custom_back_button.dart';
 import 'package:vektor_if/providers/auth_provider.dart';
 import 'package:vektor_if/providers/sector_provider.dart';
-import 'package:vektor_if/screens/lists/widgets/search_colaborators.dart'; 
+import 'package:vektor_if/screens/lists/widgets/search_colaborators.dart';
 import 'package:vektor_if/screens/lists/widgets/sector_card.dart';
 
 class ListDetailsSectors extends StatefulWidget {
@@ -33,20 +33,24 @@ class _ListDetailsSectorsState extends State<ListDetailsSectors> {
     });
   }
 
-  // Função para deletar 
-void _confirmDelete(String sectorId) {
+  // Função para deletar
+  void _confirmDelete(String sectorId) {
     showDialog(
       context: context,
       builder: (context) => ConfirmationDialog(
         title: "Excluir Setor?",
-        subtitle: "Essa ação não pode ser desfeita e todos os dados deste setor serão perdidos.",
+        subtitle:
+            "Essa ação não pode ser desfeita e todos os dados deste setor serão perdidos.",
         confirmLabel: "Excluir",
         isDestructive: true,
         onConfirm: () async {
-          // então aquicolocamos a ação de deletar.
+          //ação de deletar.
           final user = context.read<AuthProvider>().user;
           if (user != null) {
-            await context.read<SectorProvider>().deleteSector(user.uid, sectorId);
+            await context.read<SectorProvider>().deleteSector(
+              user.uid,
+              sectorId,
+            );
           }
         },
       ),
@@ -58,7 +62,7 @@ void _confirmDelete(String sectorId) {
     // Consumindo o Provider
     final sectorProvider = context.watch<SectorProvider>();
     final isLoading = sectorProvider.isLoading;
-    
+
     // Lógica de Busca
     final filteredSectors = sectorProvider.sectors.where((sector) {
       final query = _searchQuery.toLowerCase();
@@ -93,7 +97,7 @@ void _confirmDelete(String sectorId) {
                       });
                     },
                     onFilterTap: () {
-                      // Implementar filtros 
+                      // Implementar filtros
                     },
                   ),
 
@@ -104,55 +108,60 @@ void _confirmDelete(String sectorId) {
                     child: isLoading
                         ? const Center(child: CircularProgressIndicator())
                         : filteredSectors.isEmpty
-                            ? Center(
-                                child: Text(
-                                  _searchQuery.isEmpty 
-                                      ? "Nenhum setor cadastrado." 
-                                      : "Nenhum setor encontrado.",
-                                  style: const TextStyle(color: Colors.grey),
+                        ? Center(
+                            child: Text(
+                              _searchQuery.isEmpty
+                                  ? "Nenhum setor cadastrado."
+                                  : "Nenhum setor encontrado.",
+                              style: const TextStyle(color: Colors.grey),
+                            ),
+                          )
+                        : Container(
+                            clipBehavior: Clip.hardEdge,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.05),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
                                 ),
-                              )
-                            : Container(
-                                clipBehavior: Clip.hardEdge,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.05),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child: ListView.separated(
-                                  padding: EdgeInsets.zero,
-                                  // Removemos NeverScrollableScrollPhysics para a lista rolar dentro do Expanded
-                                  itemCount: filteredSectors.length,
-                                  separatorBuilder: (_, __) => const Divider(
-                                    height: 1,
-                                    thickness: 0.5,
-                                    indent: 16,
-                                    endIndent: 16,
-                                    color: AppTheme.primaryBlue,
-                                  ),
-                                  itemBuilder: (context, index) {
-                                    final sector = filteredSectors[index];
-                                    return SectorCard(
-                                      name: sector.name,
-                                      phone: sector.phone ?? "Sem telefone",
-                                      description: sector.description ?? "",
-                                      onEdit: () {
-                                      },
-                                      onDelete: () {
-                                        if (sector.id != null) {
-                                          _confirmDelete(sector.id!);
-                                        }
-                                      },
+                              ],
+                            ),
+                            child: ListView.separated(
+                              padding: EdgeInsets.zero,
+                              // Removemos NeverScrollableScrollPhysics para a lista rolar dentro do Expanded
+                              itemCount: filteredSectors.length,
+                              separatorBuilder: (_, __) => const Divider(
+                                height: 1,
+                                thickness: 0.5,
+                                indent: 16,
+                                endIndent: 16,
+                                color: AppTheme.primaryBlue,
+                              ),
+                              itemBuilder: (context, index) {
+                                final sector = filteredSectors[index];
+                                return SectorCard(
+                                  name: sector.name,
+                                  phone: sector.phone ?? "Sem telefone",
+                                  description: sector.description ?? "",
+                                  onEdit: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/sectors-register',
+                                      arguments: sector,
                                     );
                                   },
-                                ),
-                              ),
+                                  onDelete: () {
+                                    if (sector.id != null) {
+                                      _confirmDelete(sector.id!);
+                                    }
+                                  },
+                                );
+                              },
+                            ),
+                          ),
                   ),
 
                   SizedBox(height: context.percentHeight(0.02)),
@@ -181,12 +190,11 @@ void _confirmDelete(String sectorId) {
         Text(
           "Setores",
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        // Menu placeholder (pode ser removido se não usar)
-        const SizedBox(width: 48), 
+        const SizedBox(width: 48),
       ],
     );
   }
