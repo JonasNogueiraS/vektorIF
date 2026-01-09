@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/core/themes/size_extensions.dart';
+import 'package:vektor_if/core/widgets/user_status_bagde.dart';
 import 'package:vektor_if/models/data/map_repository.dart';
 import 'package:vektor_if/models/data/sectors_repository.dart';
 import 'package:vektor_if/models/sectors_model.dart';
@@ -19,14 +20,14 @@ class HomeMap extends StatefulWidget {
 }
 
 class _HomeMapState extends State<HomeMap> {
-  // --- DADOS ---
+  // DADOS 
   String? _targetInstitutionId;
   String _targetInstitutionName = "Carregando...";
   String? _mapUrl;
   List<SectorModel> _allSectors = [];
   bool _isLoading = true;
 
-  // --- FILTROS ---
+  // FILTROS
   String _searchText = "";
   String _selectedFilter = "TODOS";
 
@@ -37,7 +38,7 @@ class _HomeMapState extends State<HomeMap> {
     "UTILIDADES",
   ];
 
-  // --- REPOSITÓRIOS ---
+  //REPOSITÓRIOS 
   final _sectorsRepo = SectorsRepository();
   final _mapRepo = MapRepository();
 
@@ -172,8 +173,11 @@ class _HomeMapState extends State<HomeMap> {
                     mapUrl: _mapUrl,
                     sectors: _filteredSectors,
                   ),
-
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 10),
+                  const Center(
+                    child: UserStatusBadge(),
+                  ),
+                  const SizedBox(height: 10),
                 ],
               ),
             ),

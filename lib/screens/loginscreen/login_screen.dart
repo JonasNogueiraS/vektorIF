@@ -7,7 +7,6 @@ import 'package:vektor_if/core/widgets/background_image.dart';
 import 'package:vektor_if/core/widgets/buttom_generic.dart';
 import 'package:vektor_if/core/widgets/forms_widgets.dart';
 import 'package:vektor_if/providers/auth_provider.dart';
-// Importe o seu controller
 import 'package:vektor_if/screens/loginscreen/controller/login_controller.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -145,22 +144,22 @@ class _LoginScreenState extends State<LoginScreen> {
                                       .togglePasswordVisibility, // Ação do Controller
                                 ),
 
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: TextButton(
-                                    onPressed: () {},
-                                    child: Text(
-                                      "Esqueceu sua senha?",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelSmall
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: AppTheme.colorBlackText,
-                                          ),
-                                    ),
-                                  ),
-                                ),
+                                // Align(
+                                //   alignment: Alignment.centerRight,
+                                //   child: TextButton(
+                                //     onPressed: () {},
+                                //     child: Text(
+                                //       "Esqueceu sua senha?",
+                                //       style: Theme.of(context)
+                                //           .textTheme
+                                //           .labelSmall
+                                //           ?.copyWith(
+                                //             fontWeight: FontWeight.bold,
+                                //             color: AppTheme.colorBlackText,
+                                //           ),
+                                //     ),
+                                //   ),
+                                // ),
 
                                 const SizedBox(height: 16),
 

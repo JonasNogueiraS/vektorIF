@@ -13,7 +13,7 @@ class HomeHeader extends StatelessWidget {
   const HomeHeader({
     super.key,
     this.institutionName =
-        "Instituto Federal do Maranhão - IFMA", // Valor padrão
+        "Nome da sua instituição", // Valor padrão
     this.onSearchChanged,
   });
 
@@ -73,11 +73,11 @@ class HomeHeader extends StatelessWidget {
 
           // Barra de Busca
           Positioned(
-            bottom: -10, //efeito de sobreposição
+            bottom: -10, 
             left: 24,
             right: 24,
             child: Container(
-              height: 45, // Altura um pouco mais compacta
+              height: 45, 
               decoration: BoxDecoration(
                 color: const Color(0xffF2F2F2),
                 borderRadius: BorderRadius.circular(30),
@@ -118,6 +118,17 @@ class HomeHeader extends StatelessWidget {
 
   List<MenuOption> _buildManagerOptions(BuildContext context) {
     return [
+      MenuOption(
+        label: "Trocar Instituição",
+        icon: Icons.swap_horiz,
+        onTap: () {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/select-instituition',
+            (route) => false,
+          );
+        },
+      ),
       MenuOption(
         label: "Gerenciamento",
         icon: Icons.admin_panel_settings_outlined,

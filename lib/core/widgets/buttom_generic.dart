@@ -28,7 +28,7 @@ class ButtomGeneric extends StatelessWidget {
       width: double.infinity,
       height: 50, 
       child: isOutlined
-          // -Outlined
+          // Outlined
           ? OutlinedButton(
               onPressed: isLoading ? null : onPressed,
               style: OutlinedButton.styleFrom(
@@ -39,7 +39,7 @@ class ButtomGeneric extends StatelessWidget {
               ),
               child: _buildContent(effectiveTextColor),
             )
-          // --- ESTILO PREENCHIDO (Elevated) ---
+          // Elevated
           : ElevatedButton(
               onPressed: isLoading ? null : onPressed,
               style: ElevatedButton.styleFrom(
@@ -67,12 +67,12 @@ class ButtomGeneric extends StatelessWidget {
       );
     }
     return Text(
-      label.toUpperCase(), // O seu exemplo usava caixa alta
+      label.toUpperCase(), 
       style: TextStyle(
         color: color,
         fontWeight: FontWeight.bold,
         fontSize: 14,
-        letterSpacing: 0.5, // Espaçamento igual ao do seu exemplo
+        letterSpacing: 0.5, 
       ),
     );
   }

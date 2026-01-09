@@ -23,8 +23,8 @@ class _SelectInstitutionScreenState extends State<SelectInstitutionScreen> {
       backgroundColor: AppTheme.colorBackground,
       body: Column(
         children: [
-          const CustomHeader(showBackButton: false),
-
+          const CustomHeader(showBackButton: true),
+          
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
