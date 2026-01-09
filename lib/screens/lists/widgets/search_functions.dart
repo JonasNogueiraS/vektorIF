@@ -42,8 +42,8 @@ class SearchList extends StatelessWidget {
         const SizedBox(width: 12),
         Container(
           decoration: BoxDecoration(
-            color: AppTheme.colorLogo,
-            borderRadius: BorderRadius.circular(12),
+            color: AppTheme.primaryBlue,
+            borderRadius: BorderRadius.circular(16),
           ),
           child: IconButton(
             icon: const Icon(Icons.filter_list, color: Colors.white),

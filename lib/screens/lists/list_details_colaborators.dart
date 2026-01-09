@@ -9,7 +9,7 @@ import 'package:vektor_if/core/widgets/custom_back_button.dart';
 import 'package:vektor_if/providers/auth_provider.dart';
 import 'package:vektor_if/providers/collaborator_provider.dart';
 import 'package:vektor_if/screens/lists/widgets/colaborators_cards.dart';
-import 'package:vektor_if/screens/lists/widgets/search_colaborators.dart';
+import 'package:vektor_if/screens/lists/widgets/search_functions.dart';
 
 class ListDetailsColaborators extends StatefulWidget {
   const ListDetailsColaborators({super.key});

@@ -89,7 +89,6 @@ class _HomeMapState extends State<HomeMap> {
         if (mounted) {
           setState(() {
             _mapUrl = url;
-            // Filtra setores 
             _allSectors = sectors
                 .where((s) => s.mapX != null && s.mapY != null)
                 .toList();

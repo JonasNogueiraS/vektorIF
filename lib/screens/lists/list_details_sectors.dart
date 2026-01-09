@@ -8,7 +8,7 @@ import 'package:vektor_if/core/widgets/confirmation_dialog.dart';
 import 'package:vektor_if/core/widgets/custom_back_button.dart';
 import 'package:vektor_if/providers/auth_provider.dart';
 import 'package:vektor_if/providers/sector_provider.dart';
-import 'package:vektor_if/screens/lists/widgets/search_colaborators.dart';
+import 'package:vektor_if/screens/lists/widgets/search_functions.dart';
 import 'package:vektor_if/screens/lists/widgets/sector_card.dart';
 
 class ListDetailsSectors extends StatefulWidget {
@@ -97,7 +97,7 @@ class _ListDetailsSectorsState extends State<ListDetailsSectors> {
                       });
                     },
                     onFilterTap: () {
-                      // Implementar filtros
+                      // sem filtro
                     },
                   ),
 
