@@ -24,15 +24,16 @@ class SectorRegisterController extends ChangeNotifier {
   bool noPhone = false;
   bool isSaving = false;
 
-  String? _editingId; 
+  String? _editingId;
   bool get isEditing => _editingId != null;
 
   void loadDataForEditing(SectorModel sector) {
     _editingId = sector.id;
     nameController.text = sector.name;
-    selectedCategory = sector.category; // Certifique-se que a categoria existe na lista
+    selectedCategory =
+        sector.category; // Certifique-se que a categoria existe na lista
     descriptionController.text = sector.description ?? "";
-    
+
     // Lógica para Email
     if (sector.email == null || sector.email!.isEmpty) {
       noEmail = true;
@@ -94,9 +95,8 @@ class SectorRegisterController extends ChangeNotifier {
       // Pega o UID do usuário logado através do AuthProvider
       final user = context.read<AuthProvider>().user;
       if (user == null) throw Exception("Usuário não identificado.");
-
-      // Cria o modelo
       final newSector = SectorModel(
+        id: _editingId, 
         name: nameController.text.trim(),
         category: selectedCategory!,
         email: noEmail ? null : emailController.text.trim(),
@@ -104,11 +104,20 @@ class SectorRegisterController extends ChangeNotifier {
         description: descriptionController.text.trim(),
       );
 
-      // 3. Chama o SectorProvider para salvar no banco
-      await context.read<SectorProvider>().addSector(
-        institutionId: user.uid,
-        sector: newSector,
-      );
+      final sectorProvider = context.read<SectorProvider>();
+      if (isEditing) {
+        // edição
+        await sectorProvider.updateSector(
+          institutionId: user.uid,
+          sector: newSector,
+        );
+      } else {
+        // criação
+        await sectorProvider.addSector(
+          institutionId: user.uid,
+          sector: newSector,
+        );
+      }
 
       onSuccess();
     } catch (e) {

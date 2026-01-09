@@ -19,7 +19,10 @@ class CollaboratorsController extends ChangeNotifier {
   String? _editingId;
   bool get isEditing => _editingId != null;
 
-  void loadDataForEditing(CollaboratorModel colab, List<SectorModel> allSectors) {
+  void loadDataForEditing(
+    CollaboratorModel colab,
+    List<SectorModel> allSectors,
+  ) {
     _editingId = colab.id;
     nameController.text = colab.name;
     emailController.text = colab.email;
@@ -35,7 +38,7 @@ class CollaboratorsController extends ChangeNotifier {
     }
     notifyListeners();
   }
-  
+
   // Ações de UI
   void toggleBoss(bool? value) {
     isBoss = value ?? false;
@@ -53,7 +56,6 @@ class CollaboratorsController extends ChangeNotifier {
     required VoidCallback onSuccess,
     required Function(String) onError,
   }) async {
-    //Validação Local
     if (nameController.text.isEmpty) {
       onError("O nome é obrigatório.");
       return;
@@ -71,20 +73,28 @@ class CollaboratorsController extends ChangeNotifier {
       if (user == null) throw Exception("Usuário não identificado");
 
       final newCollaborator = CollaboratorModel(
+        id: _editingId,
         name: nameController.text.trim(),
         email: emailController.text.trim(),
         phone: phoneController.text.trim(),
-        sectorId: selectedSector!.id!, // ID garantido
+        sectorId: selectedSector!.id!,
         sectorName: selectedSector!.name,
         isBoss: isBoss,
       );
 
-      // Chama o Provider para salvar
-      await context.read<CollaboratorProvider>().addCollaborator(
-        institutionId: user.uid,
-        collaborator: newCollaborator,
-      );
+      final provider = context.read<CollaboratorProvider>();
 
+      if (isEditing) {
+        await provider.updateCollaborator(
+          institutionId: user.uid,
+          collaborator: newCollaborator,
+        );
+      } else {
+        await provider.addCollaborator(
+          institutionId: user.uid,
+          collaborator: newCollaborator,
+        );
+      }
       _clearForm();
       onSuccess();
     } catch (e) {
