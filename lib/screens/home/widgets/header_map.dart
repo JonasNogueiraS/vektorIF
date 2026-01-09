@@ -122,11 +122,7 @@ class HomeHeader extends StatelessWidget {
         label: "Trocar Instituição",
         icon: Icons.swap_horiz,
         onTap: () {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/select-instituition',
-            (route) => false,
-          );
+          Navigator.pushNamed(context, '/select-instituition');
         },
       ),
       MenuOption(
