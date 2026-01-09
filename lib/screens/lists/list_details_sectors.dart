@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
@@ -6,7 +7,6 @@ import 'package:vektor_if/core/widgets/background_image.dart';
 import 'package:vektor_if/core/widgets/buttom_generic.dart';
 import 'package:vektor_if/core/widgets/confirmation_dialog.dart';
 import 'package:vektor_if/core/widgets/custom_back_button.dart';
-import 'package:vektor_if/providers/auth_provider.dart';
 import 'package:vektor_if/providers/sector_provider.dart';
 import 'package:vektor_if/screens/lists/widgets/search_functions.dart';
 import 'package:vektor_if/screens/lists/widgets/sector_card.dart';
@@ -20,21 +20,20 @@ class ListDetailsSectors extends StatefulWidget {
 
 class _ListDetailsSectorsState extends State<ListDetailsSectors> {
   String _searchQuery = "";
+  bool _isDescending = false; 
 
   @override
   void initState() {
     super.initState();
-    // Inicia a escuta dos setores assim que a tela abre
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final user = context.read<AuthProvider>().user;
+      final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         context.read<SectorProvider>().startListeningToSectors(user.uid);
       }
     });
   }
 
-  // Função para deletar
-  void _confirmDelete(String sectorId) {
+  void _confirmDelete(String id) {
     showDialog(
       context: context,
       builder: (context) => ConfirmationDialog(
@@ -44,13 +43,9 @@ class _ListDetailsSectorsState extends State<ListDetailsSectors> {
         confirmLabel: "Excluir",
         isDestructive: true,
         onConfirm: () async {
-          //ação de deletar.
-          final user = context.read<AuthProvider>().user;
+          final user = FirebaseAuth.instance.currentUser;
           if (user != null) {
-            await context.read<SectorProvider>().deleteSector(
-              user.uid,
-              sectorId,
-            );
+            await context.read<SectorProvider>().deleteSector(user.uid, id);
           }
         },
       ),
@@ -59,15 +54,9 @@ class _ListDetailsSectorsState extends State<ListDetailsSectors> {
 
   @override
   Widget build(BuildContext context) {
-    // Consumindo o Provider
-    final sectorProvider = context.watch<SectorProvider>();
-    final isLoading = sectorProvider.isLoading;
-
-    // Lógica de Busca
-    final filteredSectors = sectorProvider.sectors.where((sector) {
-      final query = _searchQuery.toLowerCase();
-      return sector.name.toLowerCase().contains(query);
-    }).toList();
+    final provider = context.watch<SectorProvider>();
+    final isLoading = provider.isLoading;
+    final rawList = provider.sectors;
 
     return Scaffold(
       backgroundColor: AppTheme.colorBackground,
@@ -83,43 +72,50 @@ class _ListDetailsSectorsState extends State<ListDetailsSectors> {
               child: Column(
                 children: [
                   const SizedBox(height: 10),
-
-                  // Header
                   _buildHeader(context),
-
                   SizedBox(height: context.percentHeight(0.03)),
 
-                  // Barra de Pesquis
                   SearchList(
-                    onSearchChanged: (value) {
-                      setState(() {
-                        _searchQuery = value;
-                      });
+                    onSearchChanged: (val) {
+                      setState(() => _searchQuery = val);
                     },
                     onFilterTap: () {
-                      // sem filtro
+                      setState(() {
+                        _isDescending = !_isDescending;
+                      });
                     },
                   ),
 
                   SizedBox(height: context.percentHeight(0.02)),
 
-                  // LISTA REATIVA
                   Expanded(
-                    child: isLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : filteredSectors.isEmpty
-                        ? Center(
-                            child: Text(
-                              _searchQuery.isEmpty
-                                  ? "Nenhum setor cadastrado."
-                                  : "Nenhum setor encontrado.",
-                              style: const TextStyle(color: Colors.grey),
-                            ),
-                          )
-                        : Container(
+                    child: Builder(
+                      builder: (context) {
+                        if (isLoading) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        var filteredList = rawList.where((sector) {
+                          return sector.name.toLowerCase().contains(
+                            _searchQuery.toLowerCase(),
+                          );
+                        }).toList();
+
+                        filteredList.sort((a, b) {
+                          int comparison = a.name.toLowerCase().compareTo(
+                            b.name.toLowerCase(),
+                          );
+                          return _isDescending ? -comparison : comparison;
+                        });
+
+                        //SingleScrollView + ShrinkWrap
+                        return SingleChildScrollView(
+                          child: Container(
                             clipBehavior: Clip.hardEdge,
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.2),
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
                               boxShadow: [
                                 BoxShadow(
@@ -130,9 +126,11 @@ class _ListDetailsSectorsState extends State<ListDetailsSectors> {
                               ],
                             ),
                             child: ListView.separated(
+                              shrinkWrap: true, // Ocupa apenas o necessário
+                              physics:
+                                  const NeverScrollableScrollPhysics(), // Scroll controlado pelo pai
                               padding: EdgeInsets.zero,
-                              // Removemos NeverScrollableScrollPhysics para a lista rolar dentro do Expanded
-                              itemCount: filteredSectors.length,
+                              itemCount: filteredList.length,
                               separatorBuilder: (_, __) => const Divider(
                                 height: 1,
                                 thickness: 0.5,
@@ -141,10 +139,11 @@ class _ListDetailsSectorsState extends State<ListDetailsSectors> {
                                 color: AppTheme.primaryBlue,
                               ),
                               itemBuilder: (context, index) {
-                                final sector = filteredSectors[index];
+                                final sector = filteredList[index];
+
                                 return SectorCard(
                                   name: sector.name,
-                                  phone: sector.phone ?? "Sem telefone",
+                                  phone: sector.phone ?? "",
                                   description: sector.description ?? "",
                                   onEdit: () {
                                     Navigator.pushNamed(
@@ -153,15 +152,14 @@ class _ListDetailsSectorsState extends State<ListDetailsSectors> {
                                       arguments: sector,
                                     );
                                   },
-                                  onDelete: () {
-                                    if (sector.id != null) {
-                                      _confirmDelete(sector.id!);
-                                    }
-                                  },
+                                  onDelete: () => _confirmDelete(sector.id!),
                                 );
                               },
                             ),
                           ),
+                        );
+                      },
+                    ),
                   ),
 
                   SizedBox(height: context.percentHeight(0.02)),
@@ -173,6 +171,8 @@ class _ListDetailsSectorsState extends State<ListDetailsSectors> {
                       Navigator.pushNamed(context, '/sectors-register');
                     },
                   ),
+
+                  const SizedBox(height: 20),
                 ],
               ),
             ),

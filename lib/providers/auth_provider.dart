@@ -3,10 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:vektor_if/core/services/firebase_auth.dart';
 
 class AuthProvider extends ChangeNotifier {
-  //Instância do Serviço 
   final AuthService _authService = AuthService();
 
-  //Variáveis de Estado
+  //Estado
   User? _user;
   bool _isLoading = false;
   String? _errorMessage;
@@ -15,8 +14,7 @@ class AuthProvider extends ChangeNotifier {
   User? get user => _user;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
-  bool get isAuth => _user != null; // Atalho para verificar login
-  //CONSTRUTOR: Vigia o Firebase Auth em tempo real
+  bool get isAuth => _user != null; //verificar login
   AuthProvider() {
     // Sempre que alguém logar ou deslogar,
     // o Firebase avisa aqui e nós atualizamos o app.
@@ -25,7 +23,7 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
     });
   }
-  //AÇÕES (entre a Tela e o Serviço) 
+  //Ações entre a Tela e o Serviço 
   Future<void> login(String email, String password) async {
     _setLoading(true);
     _errorMessage = null; // Limpa erros antigos
@@ -33,9 +31,7 @@ class AuthProvider extends ChangeNotifier {
     try {
       // Chama arquivo firebase_auth.dart existente
       await _authService.loginUser(email: email, password: password);
-      
-      // NOTA: Não precisamos definir _user aqui manualmente. 
-      // O listener no construtor vai detectar o login automaticamente. 
+  
     } catch (e) {
       // Captura o erro do serviço e formata para a tela
       _errorMessage = e.toString().replaceAll("Exception: ", "");
@@ -76,9 +72,9 @@ class AuthProvider extends ChangeNotifier {
   // evitar repetir código de loading
   void _setLoading(bool value) {
     _isLoading = value;
-    notifyListeners(); //diz ao Flutter para redesenhar a tela
+    notifyListeners(); //redesenhar a tela
   } 
-  // Limpa a mensagem de erro
+ 
   void clearError() {
     _errorMessage = null;
     notifyListeners();

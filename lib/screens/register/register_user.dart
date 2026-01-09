@@ -134,7 +134,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 label: "Adicione uma foto da instituição",
                                 onTap: () {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text("Funcionalidade futura (Upload de Imagem)")),
+                                    const SnackBar(content: Text("Tem mas ta faltando :') ")),
                                   );
                                 },
                               ),

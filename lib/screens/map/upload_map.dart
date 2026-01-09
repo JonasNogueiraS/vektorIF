@@ -53,7 +53,7 @@ class UploadMapController extends ChangeNotifier {
   }
 }
 
-// --- TELA ---
+//TELA 
 class UploadMapScreen extends StatefulWidget {
   const UploadMapScreen({super.key});
 
@@ -131,11 +131,11 @@ class _UploadMapScreenState extends State<UploadMapScreen> {
                           ),
                           const SizedBox(height: 20),
 
-                          // --- ÁREA DE SELEÇÃO/PREVIEW ---
+                          // seleção e preview
                           ListenableBuilder(
                             listenable: _controller,
                             builder: (context, _) {
-                              // ESTADO 1: Nenhuma imagem selecionada (Mostra o botão azul grande)
+                              // Nenhuma imagem selecionada
                               if (_controller.selectedImage == null) {
                                 return Column(
                                   children: [
@@ -154,26 +154,26 @@ class _UploadMapScreenState extends State<UploadMapScreen> {
                                 );
                               } 
                               
-                              // ESTADO 2: Imagem selecionada (Mostra preview com botão remover)
+                              //Imagem selecionada
                               else {
                                 return Stack(
                                   alignment: Alignment.topRight,
                                   children: [
-                                    // A Imagem (Miniatura)
+                                    // Miniatura
                                     Container(
-                                      height: 250, // Altura fixa para o preview
+                                      height: 250, // Altura fixa
                                       width: double.infinity,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(16),
                                         border: Border.all(color: AppTheme.colorLogo.withValues(alpha: 0.3)),
                                         image: DecorationImage(
                                           image: FileImage(_controller.selectedImage!),
-                                          fit: BoxFit.cover, // Cobre a área (pode usar .contain se preferir ver inteira)
+                                          fit: BoxFit.cover, 
                                         )
                                       ),
                                     ),
                                     
-                                    // Botão de Remover (X vermelho)
+                                    // Botão de Remover
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: InkWell(
@@ -190,7 +190,6 @@ class _UploadMapScreenState extends State<UploadMapScreen> {
                               }
                             }
                           ),
-                          // --- FIM DA ÁREA DE SELEÇÃO ---
 
                           const SizedBox(height: 30),
 

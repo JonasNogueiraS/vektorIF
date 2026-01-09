@@ -14,7 +14,6 @@ class AuthService {
     required String institutionAddress,
   }) async {
     try {
-      // 1. Cria o usuário
       UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
 

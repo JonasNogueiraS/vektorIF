@@ -93,7 +93,7 @@ class HomeHeader extends StatelessWidget {
                 onChanged: onSearchChanged,
                 textAlignVertical: TextAlignVertical.center,
                 decoration: InputDecoration(
-                  hintText: "Procure por pessoa, setor...",
+                  hintText: "Busque por um setor",
                   hintStyle: const TextStyle(
                     color: Color(0xff49454F),
                     fontSize: 14,
@@ -156,11 +156,7 @@ class HomeHeader extends StatelessWidget {
         label: "Trocar Instituição",
         icon: Icons.swap_horiz,
         onTap: () {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/select-instituition',
-            (route) => false,
-          );
+          Navigator.pushNamed(context, '/select-instituition');
         },
       ),
       MenuOption(

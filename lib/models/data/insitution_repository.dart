@@ -6,7 +6,7 @@ class InstitutionRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Busca a instituição do Gerente Logado (Já existia)
+  // Busca a instituição do Gerente Logado 
   Future<InstitutionModel?> getMyInstitution() async {
     final user = _auth.currentUser;
     if (user == null) return null;
@@ -22,7 +22,7 @@ class InstitutionRepository {
     return null;
   }
 
-  // Atualiza instituição (Já existia)
+  // Atualiza instituição
   Future<void> updateInstitution(InstitutionModel institution) async {
     final user = _auth.currentUser;
     if (user == null) throw Exception('Usuário não logado');

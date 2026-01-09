@@ -17,7 +17,7 @@ class CollaboratorRepository {
         .collection('collaborators');
   }
 
-  //REGRA DE CHEFE ÚNICO
+  // CHEFE ÚNICO
   Future<void> addCollaborator(CollaboratorModel collaborator) async {
     //rebaixar chefe atual 
     if (collaborator.isBoss) {
@@ -28,22 +28,21 @@ class CollaboratorRepository {
     await _collaboratorsCollection.add(collaborator.toMap());
   }
 
-  //MÉTODO PRIVADO PARA REMOVER A CHEFIA
+  //REMOVER A CHEFIA
   Future<void> _demoteCurrentBoss(String sectorId) async {
-    // Busca: Colaboradores DO MESMO SETOR que SÃO CHEFES
+    //Colaboradores DO MESMO SETOR que SÃO CHEFES
     final querySnapshot = await _collaboratorsCollection
         .where('sectorId', isEqualTo: sectorId)
         .where('isBoss', isEqualTo: true)
         .get();
 
-    // Se encontrou alguém (usamos loop para verificar)
+    // Se encontrou alguém
     for (var doc in querySnapshot.docs) {
-      // Atualiza o documento definindo isBoss como false
       await doc.reference.update({'isBoss': false});
     }
   }
 
-  // Listar Colaboradores-Stream
+  // Listar Colaboradores
   Stream<List<CollaboratorModel>> getCollaboratorsStream() {
     if (_userId == null) return const Stream.empty();
 

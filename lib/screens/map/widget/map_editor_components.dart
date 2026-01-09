@@ -42,7 +42,7 @@ class MapEditorHeader extends StatelessWidget {
               MenuOption(
                 label: 'Limpar Marcações',
                 icon: Icons.cleaning_services_outlined,
-                color: AppTheme.primaryColor,
+                color: AppTheme.colorBlackText,
                 onTap: onClearAllPins,
               ),
               MenuOption(

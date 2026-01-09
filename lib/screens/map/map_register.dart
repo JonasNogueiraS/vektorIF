@@ -27,11 +27,11 @@ class MapRegister extends StatelessWidget {
                   children: [
                     const SizedBox(height: 10),
 
-                    // --- HEADER ---
+                    // header
+                    const CustomBackButtom(),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const CustomBackButtom(),
                         Text(
                           "Gestão de Mapas",
                           style: Theme.of(context).textTheme.headlineSmall
@@ -41,16 +41,8 @@ class MapRegister extends StatelessWidget {
                                 color: const Color(0xff49454F),
                               ),
                         ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.menu,
-                            color: Color(0xff49454F),
-                          ),
-                        ),
                       ],
                     ),
-
                     SizedBox(height: context.percentHeight(0.03)),
 
                     Center(

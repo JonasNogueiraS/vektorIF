@@ -10,9 +10,7 @@ class MapRepository {
 
   String? get _userId => _auth.currentUser?.uid;
 
-  //MÉTODOS DE LEITURA
-
-  // 1. CORREÇÃO DO ERRO: Método que aceita ID externo (para visitantes)
+  //Método para visitantes
   Future<String?> getMapUrl(String institutionId) async {
     try {
       final doc = await _firestore.collection('institutions').doc(institutionId).get();
@@ -27,13 +25,13 @@ class MapRepository {
     }
   }
 
-  // 2. Método para o Editor (Usa o ID do usuário logado)
+  //usuário logado
   Future<String?> getCurrentMapUrl() async {
     if (_userId == null) return null;
-    return getMapUrl(_userId!); // Reutiliza a lógica acima
+    return getMapUrl(_userId!); 
   }
 
-  //MÉTODOS DE ESCRITA (Somente Logado)
+  //Somente Logado
 
   Future<void> uploadMapImage(File imageFile) async {
     if (_userId == null) return;

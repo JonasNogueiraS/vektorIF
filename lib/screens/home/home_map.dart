@@ -1,11 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
 import 'package:vektor_if/core/themes/size_extensions.dart';
 import 'package:vektor_if/core/widgets/user_status_bagde.dart';
 import 'package:vektor_if/models/data/map_repository.dart';
 import 'package:vektor_if/models/data/sectors_repository.dart';
 import 'package:vektor_if/models/sectors_model.dart';
+import 'package:vektor_if/providers/collaborator_provider.dart';
 import 'package:vektor_if/screens/primary/widgets/filter_list.dart';
 import 'package:vektor_if/screens/home/widgets/header_map.dart';
 import 'package:vektor_if/screens/home/widgets/interactive_map.dart';
@@ -81,8 +83,13 @@ class _HomeMapState extends State<HomeMap> {
     }
   }
 
-  Future<void> _loadData() async {
+Future<void> _loadData() async {
     try {
+      if (mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          context.read<CollaboratorProvider>().startListeningToCollaborators(_targetInstitutionId!);
+        });
+      }
       final url = await _mapRepo.getMapUrl(_targetInstitutionId!);
 
       _sectorsRepo.getSectorsStream(_targetInstitutionId!).listen((sectors) {

@@ -11,9 +11,9 @@ class CollaboratorProvider extends ChangeNotifier {
   List<CollaboratorModel> get collaborators => _collaborators;
   bool get isLoading => _isLoading;
 
-  // AÇÕES 
 
-  // 1. Listar (Escuta em Tempo Real)
+
+  // Lista colaboradores da instituição
   void startListeningToCollaborators(String institutionId) {
     _setLoading(true);
     
@@ -36,7 +36,7 @@ class CollaboratorProvider extends ChangeNotifier {
     });
   }
 
-  // 2. Adicionar Colaborador (Com regra de Chefe)
+  //Adicionar Colaborador
   Future<void> addCollaborator({
     required String institutionId,
     required CollaboratorModel collaborator,
@@ -62,7 +62,7 @@ class CollaboratorProvider extends ChangeNotifier {
     }
   }
 
-  // Lógica de Rebaixar Chefe (Privada)
+  // Lógica de Rebaixar Chefe
   Future<void> _demoteCurrentBoss(CollectionReference collection, String sectorId) async {
     final querySnapshot = await collection
         .where('sectorId', isEqualTo: sectorId)

@@ -5,8 +5,7 @@ class SectorModel {
   final String? description;
   final String? email;
   final String? phone;
-
-  // Coordenadas (opcionais na criação)
+  // Coordenadas 
   final double? mapX;
   final double? mapY;
 
@@ -29,10 +28,6 @@ class SectorModel {
       'description': description,
       'email': email,
       'phone': phone,
-      // Nota: mapX e mapY geralmente são salvos via editor de mapa,
-      // mas se quiser salvar na criação, pode descomentar:
-      // 'mapX': mapX,
-      // 'mapY': mapY,
     };
   }
 
@@ -45,13 +40,13 @@ class SectorModel {
       description: map['description'],
       email: map['email'],
       phone: map['phone'],
-      // Converte para double com segurança
+      // Converte para double
       mapX: (map['mapX'] as num?)?.toDouble(),
       mapY: (map['mapY'] as num?)?.toDouble(),
     );
   }
 
-  // Método auxiliar para criar cópia com novas coordenadas
+  // auxilia para criar cópia com novas coordenadas
   SectorModel copyWith({double? mapX, double? mapY}) {
     return SectorModel(
       id: id,

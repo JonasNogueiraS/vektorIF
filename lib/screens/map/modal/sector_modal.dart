@@ -63,7 +63,6 @@ class SectorModal extends StatelessWidget {
                   for (var sector in allSectors) sector.id: sector
                 };
                 final uniqueSectorsList = uniqueSectorsMap.values.toList();
-                // -------------------------------------
 
                 return ListView.separated(
                   shrinkWrap: true,
@@ -71,7 +70,7 @@ class SectorModal extends StatelessWidget {
                   separatorBuilder: (_, __) => const Divider(height: 1),
                   itemBuilder: (_, index) {
                     final sector = uniqueSectorsList[index];
-                    // Contagem de quantas vezes esse setor já foi marcado (Opcional, mas útil)
+                    // Contagem de quantas vezes esse setor já foi marcado
                     final count = allSectors.where((s) => s.id == sector.id && s.mapX != null).length;
 
                     return ListTile(

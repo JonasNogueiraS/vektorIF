@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vektor_if/core/themes/app_theme.dart';
@@ -6,31 +7,29 @@ import 'package:vektor_if/core/widgets/background_image.dart';
 import 'package:vektor_if/core/widgets/buttom_generic.dart';
 import 'package:vektor_if/core/widgets/confirmation_dialog.dart';
 import 'package:vektor_if/core/widgets/custom_back_button.dart';
-import 'package:vektor_if/providers/auth_provider.dart';
 import 'package:vektor_if/providers/collaborator_provider.dart';
 import 'package:vektor_if/screens/lists/widgets/colaborators_cards.dart';
-import 'package:vektor_if/screens/lists/widgets/search_functions.dart';
+import 'package:vektor_if/screens/lists/widgets/search_functions.dart'; 
 
 class ListDetailsColaborators extends StatefulWidget {
   const ListDetailsColaborators({super.key});
 
   @override
-  State<ListDetailsColaborators> createState() =>
-      _ListDetailsColaboratorsState();
+  State<ListDetailsColaborators> createState() => _ListDetailsColaboratorsState();
 }
 
 class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
   String _searchQuery = "";
+  bool _isDescending = false; 
 
   @override
   void initState() {
     super.initState();
+    // Inicia a escuta no Provider assim que a tela abre
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final user = context.read<AuthProvider>().user;
+      final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        context.read<CollaboratorProvider>().startListeningToCollaborators(
-          user.uid,
-        );
+        context.read<CollaboratorProvider>().startListeningToCollaborators(user.uid);
       }
     });
   }
@@ -40,16 +39,13 @@ class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
       context: context,
       builder: (context) => ConfirmationDialog(
         title: "Remover Colaborador?",
-        subtitle: "Tem certeza que deseja remover este colaborador da lista?",
+        subtitle: "Tem certeza que deseja remover este colaborador?",
         confirmLabel: "Remover",
         isDestructive: true,
         onConfirm: () async {
-          final user = context.read<AuthProvider>().user;
+          final user = FirebaseAuth.instance.currentUser;
           if (user != null) {
-            await context.read<CollaboratorProvider>().deleteCollaborator(
-              user.uid,
-              id,
-            );
+            await context.read<CollaboratorProvider>().deleteCollaborator(user.uid, id);
           }
         },
       ),
@@ -60,10 +56,7 @@ class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
   Widget build(BuildContext context) {
     final provider = context.watch<CollaboratorProvider>();
     final isLoading = provider.isLoading;
-
-    final filteredList = provider.collaborators.where((colab) {
-      return colab.name.toLowerCase().contains(_searchQuery.toLowerCase());
-    }).toList();
+    final readList = provider.collaborators;
 
     return Scaffold(
       backgroundColor: AppTheme.colorBackground,
@@ -83,22 +76,39 @@ class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
                   SizedBox(height: context.percentHeight(0.03)),
 
                   SearchList(
-                    onSearchChanged: (val) =>
-                        setState(() => _searchQuery = val),
-                    onFilterTap: () {},
+                    onSearchChanged: (val) {
+                      setState(() => _searchQuery = val);
+                    },
+                    onFilterTap: () {
+                      setState(() {
+                        _isDescending = !_isDescending;
+                        
+                      });
+                    },
                   ),
 
                   SizedBox(height: context.percentHeight(0.02)),
 
-                  // LISTA
-                  Expanded(
-                    child: isLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : filteredList.isEmpty
-                        ? const Center(
-                            child: Text("Nenhum colaborador encontrado."),
-                          )
-                        : Container(
+                  // 
+                  Expanded( 
+                    child: Builder(
+                      builder: (context) {
+                        if (isLoading) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                        //Busca
+                        var filteredList = readList.where((colab) {
+                          return colab.name.toLowerCase().contains(_searchQuery.toLowerCase());
+                        }).toList();
+                        // Ordenação
+                        filteredList.sort((a, b) {
+                          int comparison = a.name.toLowerCase().compareTo(b.name.toLowerCase());
+                          return _isDescending ? -comparison : comparison; 
+                        });
+
+                        //Container Branco Responsivo
+                        return SingleChildScrollView(
+                          child: Container(
                             clipBehavior: Clip.hardEdge,
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -111,7 +121,11 @@ class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
                                 ),
                               ],
                             ),
+                            // shrinkWrap: true faz a ListView ocupar só o tamanho dos filhos
+                            // physics: NeverScrollableScrollPhysics pois o SingleChildScrollView de fora rola
                             child: ListView.separated(
+                              shrinkWrap: true, 
+                              physics: const NeverScrollableScrollPhysics(),
                               padding: EdgeInsets.zero,
                               itemCount: filteredList.length,
                               separatorBuilder: (_, __) => const Divider(
@@ -131,9 +145,9 @@ class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
                                   isBoss: colab.isBoss,
                                   onEdit: () {
                                     Navigator.pushNamed(
-                                      context,
-                                      '/collaborators-register',
-                                      arguments: colab,
+                                      context, 
+                                      '/collaborators-register', 
+                                      arguments: colab
                                     );
                                   },
                                   onDelete: () => _confirmDelete(colab.id!),
@@ -141,6 +155,9 @@ class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
                               },
                             ),
                           ),
+                        );
+                      },
+                    ),
                   ),
 
                   SizedBox(height: context.percentHeight(0.02)),
@@ -148,9 +165,11 @@ class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
                   ButtomGeneric(
                     label: "Adicionar Colaborador",
                     backgroundColor: AppTheme.colorButtons,
-                    onPressed: () =>
-                        Navigator.pushNamed(context, '/collaborators-register'),
+                    onPressed: () => Navigator.pushNamed(
+                        context, '/collaborators-register'),
                   ),
+                  
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -160,6 +179,7 @@ class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
     );
   }
 
+
   Widget _buildHeader(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -168,9 +188,9 @@ class _ListDetailsColaboratorsState extends State<ListDetailsColaborators> {
         Text(
           "Colaboradores",
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
         ),
         const SizedBox(width: 48),
       ],

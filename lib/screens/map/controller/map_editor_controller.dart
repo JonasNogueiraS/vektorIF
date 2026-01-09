@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Import necessário
+import 'package:firebase_auth/firebase_auth.dart'; 
 import 'package:vektor_if/models/data/map_repository.dart';
 import 'package:vektor_if/models/data/sectors_repository.dart';
 import 'package:vektor_if/models/sectors_model.dart';
@@ -17,12 +17,10 @@ class MapEditorController extends ChangeNotifier {
     notifyListeners();
     try {
       backendMapUrl = await _mapRepo.getCurrentMapUrl();
-      
-      // CORREÇÃO: Pega o ID do usuário logado
+      //Pega o ID do usuário logado
       final userId = FirebaseAuth.instance.currentUser?.uid;
-      
       if (userId != null) {
-        // CORREÇÃO: Passa o ID para o método
+        //Passa o ID para o método
         final allSectors = await _sectorsRepo.getSectorsStream(userId).first;
         
         mappedSectors = allSectors
@@ -37,10 +35,6 @@ class MapEditorController extends ChangeNotifier {
       notifyListeners();
     }
   }
-
-  // ... (o restante dos métodos addSector, removeSector, saveMap continuam iguais)
-  // Certifique-se apenas que os métodos que chamam repositório de escrita (save) 
-  // não precisam de ID pois o repositório pega internamente o _userId.
   
   void addSector(Offset position, SectorModel originalSector) {
     final newPin = originalSector.copyWith(
