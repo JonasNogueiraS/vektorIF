@@ -62,7 +62,7 @@ class CollaboratorProvider extends ChangeNotifier {
     }
   }
 
-  // Lógica de Rebaixar Chefe
+  // retira a chefia
   Future<void> _demoteCurrentBoss(CollectionReference collection, String sectorId) async {
     final querySnapshot = await collection
         .where('sectorId', isEqualTo: sectorId)

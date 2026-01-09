@@ -50,7 +50,7 @@ class SectorProvider extends ChangeNotifier {
           .add(sector.toMap());
       
     } catch (e) {
-      rethrow; // Joga o erro para a tela tratar
+      rethrow; 
     } finally {
       _setLoading(false);
     }
