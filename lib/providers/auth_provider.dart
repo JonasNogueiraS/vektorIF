@@ -16,8 +16,7 @@ class AuthProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   bool get isAuth => _user != null; //verificar login
   AuthProvider() {
-    // Sempre que alguém logar ou deslogar,
-    // o Firebase avisa aqui e nós atualizamos o app.
+    // Sempre que alguém logar ou deslogar
     FirebaseAuth.instance.authStateChanges().listen((User? newUser) {
       _user = newUser;
       notifyListeners();
@@ -26,14 +25,13 @@ class AuthProvider extends ChangeNotifier {
   //Ações entre a Tela e o Serviço 
   Future<void> login(String email, String password) async {
     _setLoading(true);
-    _errorMessage = null; // Limpa erros antigos
+    _errorMessage = null;
 
     try {
-      // Chama arquivo firebase_auth.dart existente
       await _authService.loginUser(email: email, password: password);
   
     } catch (e) {
-      // Captura o erro do serviço e formata para a tela
+      // Captura o erro
       _errorMessage = e.toString().replaceAll("Exception: ", "");
     } finally {
       _setLoading(false);
@@ -68,11 +66,10 @@ class AuthProvider extends ChangeNotifier {
   Future<void> logout() async {
     await _authService.signOut();
   }
-  // AUXILIARES
   // evitar repetir código de loading
   void _setLoading(bool value) {
     _isLoading = value;
-    notifyListeners(); //redesenhar a tela
+    notifyListeners();
   } 
  
   void clearError() {

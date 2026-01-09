@@ -12,7 +12,6 @@ class SectorProvider extends ChangeNotifier {
   List<SectorModel> get sectors => _sectors;
   bool get isLoading => _isLoading;
 
-  // AÇÕES
 
   //Listagem
   void startListeningToSectors(String institutionId) {

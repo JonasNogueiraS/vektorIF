@@ -26,7 +26,7 @@ class CollaboratorsController extends ChangeNotifier {
     phoneController.text = colab.phone;
     isBoss = colab.isBoss;
 
-    // Encontrar o setor correto na lista para o Dropdown funcionar
+    // Encontrar o setor correto na lista para o Dropdown
     try {
       selectedSector = allSectors.firstWhere((s) => s.id == colab.sectorId);
     } catch (e) {

@@ -6,7 +6,6 @@ import 'package:vektor_if/core/widgets/menu_buttons.dart';
 import '../../../../../core/themes/app_theme.dart';
 
 class HomeHeader extends StatelessWidget {
-  // NOVOS PARÂMETROS
   final String institutionName;
   final ValueChanged<String>? onSearchChanged;
 
